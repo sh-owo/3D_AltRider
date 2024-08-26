@@ -5,56 +5,52 @@ using UnityEngine;
 
 public class Car_movement : MonoBehaviour
 {
-    
     [Header("Car Component")]
     Rigidbody carRigidbody;
     [SerializeField] private float mass = 10f;
     [SerializeField] private Transform carTransform;
     [SerializeField] private WheelCollider[] wheelColliders;
     [SerializeField] private Transform[] wheelTransforms;
-    
+
     [Header("Car Max Value")]
     private float maxSpeed = 100f;
     private float maxAccelerateForce = 1000f;
     private float maxBrakeForce = 800f;
     private float maxSteerAngle = 30f;
-    
+
     [Header("Acceleration Value")]
     private float SteerRotatePerSecond = 20f;
     private float AccelerateForcePerSecond = 1000f;
     private float BrakeForcePerSecond = 40f;
-    
+
     [Header("Car Current Value")]
     [SerializeField] private float currentSteerAngle = 0f;
     [SerializeField] private float currentAccelerateForce = 0f;
     [SerializeField] private float currentSpeed = 0f;
     [SerializeField] private float currentBrakeForce = 0f;
-    
+
     void Awake()
     {
         carRigidbody = GetComponent<Rigidbody>();
         carTransform = GetComponent<Transform>();
         wheelColliders = GetComponentsInChildren<WheelCollider>();
         wheelTransforms = GetComponentsInChildren<Transform>();
-        
+
         carRigidbody.mass = mass;
     }
 
-    
     private void FixedUpdate()
     {
         Accelerate();
         Steering();
     }
 
-    public float GetSpeed()
-    {
-        return carRigidbody.velocity.magnitude;
-    }
+    public float GetSpeed() => carRigidbody.velocity.magnitude;
+
     public void Accelerate()
     {
         currentSpeed = GetSpeed();
-        
+
         float vertical = Input.GetAxis("Vertical");
         if (vertical > 0.05f)
         {
@@ -73,11 +69,10 @@ public class Car_movement : MonoBehaviour
         }
         if (currentSpeed < maxSpeed)
         {
-            carRigidbody.AddForce(currentAccelerateForce * transform.forward);    
+            carRigidbody.AddForce(currentAccelerateForce * transform.forward);
         }
-        
+
         Debug.Log("currentAccelerateForce: " + currentAccelerateForce + " vertical:" + vertical + " currentSpeed: " + currentSpeed);
-        
     }
 
     private void Steering()
@@ -90,23 +85,30 @@ public class Car_movement : MonoBehaviour
         }
         else
         {
-            currentSteerAngle =  Mathf.Lerp(currentSteerAngle, 0, Time.deltaTime * (currentAccelerateForce * 0.05f));
+            currentSteerAngle = Mathf.Lerp(currentSteerAngle, 0, Time.deltaTime * (currentAccelerateForce * 0.05f));
         }
-        
+
         wheelColliders[0].steerAngle = currentSteerAngle;
         wheelColliders[1].steerAngle = currentSteerAngle;
-        
-        // wheelColliders[0].steerAngle = currentSteerAngle;
-        // wheelColliders[1].steerAngle = currentSteerAngle;
-        // wheelColliders[2].steerAngle = currentSteerAngle;
-        // wheelColliders[3].steerAngle = currentSteerAngle;
-        //
-        
+
         carRigidbody.AddTorque(currentSteerAngle * carTransform.up * currentAccelerateForce);
-        
-        Debug.Log("currentSteerAngle: " + currentSteerAngle + " horizontal:" + Mathf.Abs(horizontal) );
+
+        Debug.Log("currentSteerAngle: " + currentSteerAngle + " horizontal:" + Mathf.Abs(horizontal));
     }
-    
-    
-    
+
+    public float GetCurrentSpeed() => currentSpeed;
+    public float GetCurrentSteerAngle() => currentSteerAngle;
+    public float GetCurrentAccelerateForce() => currentAccelerateForce;
+    public float GetMaxSteerAngle() => maxSteerAngle;
+    public float GetMaxAccelerateForce() => maxAccelerateForce;
+
+    public void SetCurrentAccelerateForce(float value) => currentAccelerateForce = value;
+    public void SetCurrentSteerAngle(float value) => currentSteerAngle = value;
+
+    public void ResetCarValues()
+    {
+        currentSpeed = 0;
+        currentSteerAngle = 0;
+        currentAccelerateForce = 0;
+    }
 }
