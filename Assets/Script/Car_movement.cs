@@ -8,7 +8,7 @@ public class Car_movement : MonoBehaviour
     
     [Header("Car Component")]
     Rigidbody carRigidbody;
-    [SerializeField] private float mass = 1000f;
+    [SerializeField] private float mass = 10f;
     [SerializeField] private Transform carTransform;
     [SerializeField] private WheelCollider[] wheelColliders;
     [SerializeField] private Transform[] wheelTransforms;
@@ -40,15 +40,21 @@ public class Car_movement : MonoBehaviour
         carRigidbody.mass = mass;
     }
 
+    
     private void FixedUpdate()
     {
         Accelerate();
         Steering();
     }
 
-
+    public float GetSpeed()
+    {
+        return carRigidbody.velocity.magnitude;
+    }
     public void Accelerate()
     {
+        currentSpeed = GetSpeed();
+        
         float vertical = Input.GetAxis("Vertical");
         if (vertical > 0.05f)
         {
@@ -65,9 +71,12 @@ public class Car_movement : MonoBehaviour
             currentAccelerateForce = Mathf.Lerp(currentAccelerateForce, 0, Time.deltaTime * 5f);
             currentBrakeForce = 0f;
         }
-        carRigidbody.AddForce(currentAccelerateForce * transform.forward);
+        if (currentSpeed < maxSpeed)
+        {
+            carRigidbody.AddForce(currentAccelerateForce * transform.forward);    
+        }
         
-        Debug.Log("currentAccelerateForce: " + currentAccelerateForce + " vertical:" + vertical );
+        Debug.Log("currentAccelerateForce: " + currentAccelerateForce + " vertical:" + vertical + " currentSpeed: " + currentSpeed);
         
     }
 
@@ -81,8 +90,11 @@ public class Car_movement : MonoBehaviour
         }
         else
         {
-            currentSteerAngle =  Mathf.Lerp(currentSteerAngle, 0, Time.deltaTime * (currentAccelerateForce * 0.01f));
+            currentSteerAngle =  Mathf.Lerp(currentSteerAngle, 0, Time.deltaTime * (currentAccelerateForce * 0.05f));
         }
+        
+        wheelColliders[0].steerAngle = currentSteerAngle;
+        wheelColliders[1].steerAngle = currentSteerAngle;
         
         // wheelColliders[0].steerAngle = currentSteerAngle;
         // wheelColliders[1].steerAngle = currentSteerAngle;
