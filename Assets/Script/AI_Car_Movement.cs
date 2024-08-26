@@ -8,9 +8,14 @@ using UnityEngine;
 public class AI_Car_Movement : Agent
 {
     private Car_movement carMovement;
-
+    [SerializeField] private Transform checkpoint;
+    [SerializeField] private Transform finishLine;
+    
+    
     public override void Initialize()
     {
+        checkpoint= GameObject.Find("Checkpoint").transform;
+        finishLine = GameObject.Find("FinishLine").transform;
         carMovement = GetComponent<Car_movement>();
     }
 
