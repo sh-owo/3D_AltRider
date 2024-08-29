@@ -19,9 +19,9 @@ public class Car_movement : MonoBehaviour
     private float maxSteerAngle = 30f;
 
     [Header("Acceleration Value")]
-    private float SteerRotatePerSecond = 20f;
-    private float AccelerateForcePerSecond = 1000f;
-    private float BrakeForcePerSecond = 40f;
+    private float steerRotatePerSecond = 20f;
+    private float accelerateForcePerSecond = 1000f;
+    private float brakeForcePerSecond = 40f;
 
     [Header("Car Current Value")]
     [SerializeField] private float currentSteerAngle = 0f;
@@ -41,25 +41,25 @@ public class Car_movement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        Accelerate();
-        Steering();
+        float vertical = Input.GetAxis("Vertical");
+        float horizontal = Input.GetAxis("Horizontal");
+        Accelerate(vertical);
+        Steering(horizontal);
     }
 
     public float GetSpeed() => carRigidbody.velocity.magnitude;
 
-    public void Accelerate()
+    public void Accelerate(float vertical)
     {
         currentSpeed = GetSpeed();
-
-        float vertical = Input.GetAxis("Vertical");
         if (vertical > 0.05f)
         {
-            currentAccelerateForce += AccelerateForcePerSecond * vertical * Time.deltaTime;
+            currentAccelerateForce += accelerateForcePerSecond * vertical * Time.deltaTime;
             currentAccelerateForce = Mathf.Clamp(currentAccelerateForce, 0, maxAccelerateForce);
         }
         else if (vertical < -0.05f)
         {
-            currentBrakeForce += BrakeForcePerSecond * Mathf.Abs(vertical) * Time.deltaTime;
+            currentBrakeForce += brakeForcePerSecond * Mathf.Abs(vertical) * Time.deltaTime;
             currentBrakeForce = Mathf.Clamp(currentBrakeForce, 0, maxBrakeForce);
         }
         else
@@ -75,12 +75,11 @@ public class Car_movement : MonoBehaviour
         Debug.Log("currentAccelerateForce: " + currentAccelerateForce + " vertical:" + vertical + " currentSpeed: " + currentSpeed);
     }
 
-    private void Steering()
+    public void Steering(float horizontal)
     {
-        float horizontal = Input.GetAxis("Horizontal");
         if (Mathf.Abs(horizontal) > 0.05f)
         {
-            currentSteerAngle += SteerRotatePerSecond * horizontal * Time.deltaTime;
+            currentSteerAngle += steerRotatePerSecond * horizontal * Time.deltaTime;
             currentSteerAngle = Mathf.Clamp(currentSteerAngle, -maxSteerAngle, maxSteerAngle);
         }
         else
@@ -95,12 +94,13 @@ public class Car_movement : MonoBehaviour
 
         Debug.Log("currentSteerAngle: " + currentSteerAngle + " horizontal:" + Mathf.Abs(horizontal));
     }
+    
+    public float GetCurrentSpeed { get { return currentSpeed; } }
 
-    public float GetCurrentSpeed() => currentSpeed;
-    public float GetCurrentSteerAngle() => currentSteerAngle;
-    public float GetCurrentAccelerateForce() => currentAccelerateForce;
-    public float GetMaxSteerAngle() => maxSteerAngle;
-    public float GetMaxAccelerateForce() => maxAccelerateForce;
+    public float GetCurrentSteerAngle { get {return currentSteerAngle;} }
+    
+    // public float GetMaxSteerAngle() => maxSteerAngle;
+    // public float GetMaxAccelerateForce() => maxAccelerateForce;
 
     public void SetCurrentAccelerateForce(float value) => currentAccelerateForce = value;
     public void SetCurrentSteerAngle(float value) => currentSteerAngle = value;
