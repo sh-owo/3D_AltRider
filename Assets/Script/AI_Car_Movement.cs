@@ -8,19 +8,23 @@ using UnityEngine;
 public class AI_Car_Movement : Agent
 {
     private Car_movement carMovement;
-    [SerializeField] private Transform checkpoint;
+    [SerializeField] List<Transform>checkpoint;
     [SerializeField] private Transform finishLine;
+    
+    private int currentindex = 0;
+    
+    
     
     
     public override void Initialize()
     {
-        checkpoint= GameObject.Find("Checkpoint").transform;
         finishLine = GameObject.Find("FinishLine").transform;
         carMovement = GetComponent<Car_movement>();
     }
 
     public override void OnActionReceived(ActionBuffers actionBuffers)
     {
+        Vector3 directionToNextCheckpoint = (checkpoint[currentindex].position - carMovement.transform.position).normalized;
         var vectorAction = actionBuffers.ContinuousActions;
         carMovement.SetCurrentAccelerateForce(vectorAction[0] * carMovement.GetMaxAccelerateForce());
         carMovement.SetCurrentSteerAngle(vectorAction[1] * carMovement.GetMaxSteerAngle());
@@ -36,6 +40,7 @@ public class AI_Car_Movement : Agent
         sensor.AddObservation(carMovement.GetCurrentSpeed());
         sensor.AddObservation(carMovement.GetCurrentSteerAngle());
         sensor.AddObservation(carMovement.GetCurrentAccelerateForce());
+        sensor.AddObservation(carMovement.transform.position);
     }
 
     public override void Heuristic(in ActionBuffers actionsOut)

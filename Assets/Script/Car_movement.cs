@@ -85,13 +85,13 @@ public class Car_movement : MonoBehaviour
         }
         else
         {
-            currentSteerAngle = Mathf.Lerp(currentSteerAngle, 0, Time.deltaTime * (currentAccelerateForce * 0.05f));
+            currentSteerAngle = Mathf.Lerp(currentSteerAngle, 0, Time.deltaTime * (currentAccelerateForce * 0.02f));
         }
 
         wheelColliders[0].steerAngle = currentSteerAngle;
         wheelColliders[1].steerAngle = currentSteerAngle;
 
-        carRigidbody.AddTorque(currentSteerAngle * carTransform.up * currentAccelerateForce);
+        carRigidbody.AddTorque(currentSteerAngle * carTransform.up * currentAccelerateForce * 0.1f);
 
         Debug.Log("currentSteerAngle: " + currentSteerAngle + " horizontal:" + Mathf.Abs(horizontal));
     }
@@ -107,8 +107,8 @@ public class Car_movement : MonoBehaviour
 
     public void ResetCarValues()
     {
-        currentSpeed = 0;
-        currentSteerAngle = 0;
-        currentAccelerateForce = 0;
+        currentSpeed = 0f;
+        currentSteerAngle = 0f;
+        currentAccelerateForce = 0f;
     }
 }
