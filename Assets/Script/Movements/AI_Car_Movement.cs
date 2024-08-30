@@ -9,26 +9,28 @@ using UnityEngine;
 public class AI_Car_Movement : Agent
 {
     private float time;
-    
+    private Vector3 initialPosition;
+
     private Car_movement carMovement;
     private float previous_distance;
-    [SerializeField] List<Transform>checkpointTransforms;
-    [SerializeField] private Transform finishLine;
-    
+    private List<Transform> checkpointTransforms;
+    private Transform finishLine;
+
     private int currentindex = 0;
-    
+
     public void Checkpoint_List()
     {
+        checkpointTransforms = new List<Transform>();
         for (int index = 0; index <= 4; index++)
         {
-            string checkpointName = "Checkpoint " + index + "";
-            
+            string checkpointName = "Checkpoint " + index;
+
             GameObject checkpointObject = GameObject.Find(checkpointName);
 
             if (checkpointObject != null)
             {
                 checkpointTransforms.Add(checkpointObject.transform);
-                Debug.Log("Loaded " + checkpointName+ " checkpoints.");
+                Debug.Log("Loaded " + checkpointName + " checkpoints.");
             }
             else
             {
@@ -36,38 +38,36 @@ public class AI_Car_Movement : Agent
             }
         }
     }
-    
-    
+
     public override void Initialize()
     {
         finishLine = GameObject.Find("FinishLine").transform;
         Checkpoint_List();
         carMovement = GetComponent<Car_movement>();
         previous_distance = float.MaxValue;
+        initialPosition = transform.position;
         currentindex = 0;
         time = 0f;
-        
     }
 
     public override void OnActionReceived(ActionBuffers actionBuffers)
     {
         float vertical = actionBuffers.ContinuousActions[0];
         float horizontal = actionBuffers.ContinuousActions[1];
-        
+
         carMovement.Accelerate(vertical);
         carMovement.Steering(horizontal);
-        
+
         if (currentindex < checkpointTransforms.Count)
         {
             float distanceToCheckpoint = Vector3.Distance(transform.position, checkpointTransforms[currentindex].position);
-            
-            float distance = Vector3.Distance(transform.position, checkpointTransforms[currentindex].position);
-            if (distance < 1f)
+
+            if (distanceToCheckpoint < 1f)
             {
                 currentindex++;
                 time = 0f;
             }
-            
+
             if (currentindex == checkpointTransforms.Count)
             {
                 float distanceToFinish = Vector3.Distance(transform.position, finishLine.position);
@@ -79,55 +79,57 @@ public class AI_Car_Movement : Agent
                 }
             }
 
-            for (int i = 1; i <= 5; i++)
+            if (distanceToCheckpoint < previous_distance)
             {
-                if(distanceToCheckpoint < previous_distance)
+                if (distanceToCheckpoint < 5f)
                 {
-                    if(distanceToCheckpoint < 5f)
-                    {
-                        SetReward(1f/i);
-                        break;
-                    }
-                }
-                else
-                {
-                    if(distanceToCheckpoint > previous_distance)
-                    {
-                        SetReward(-1f/i);
-                        break;
-                    }
+                    SetReward(1f);
                 }
             }
-            
+            else
+            {
+                SetReward(-1f);
+            }
+
             if (time > 10f)
             {
                 SetReward(-0.5f);
                 EndEpisode();
             }
-            
-            
+
             time += Time.deltaTime;
-        
             previous_distance = distanceToCheckpoint;
-            
         }
-        
     }
 
     public override void OnEpisodeBegin()
     {
         carMovement.ResetCarValues();
+        carMovement.
+        transform.position = initialPosition; 
+        currentindex = 0;
+        previous_distance = float.MaxValue;
+        time = 0f;
     }
 
     public override void CollectObservations(VectorSensor sensor)
     {
-        sensor.AddObservation(carMovement.GetCurrentSpeed);
+        // sensor.AddObservation(carMovement.GetCurrentSpeed); 
         sensor.AddObservation(carMovement.GetCurrentSteerAngle);
         sensor.AddObservation(carMovement.transform.position);
         sensor.AddObservation(carMovement.transform.rotation);
         if (currentindex < checkpointTransforms.Count)
         {
             sensor.AddObservation(checkpointTransforms[currentindex].position);
+        }
+    }
+
+    public void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Track"))
+        {
+            SetReward(-0.3f);
+            EndEpisode();
         }
     }
 

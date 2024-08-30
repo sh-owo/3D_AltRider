@@ -7,7 +7,7 @@ public class Car_movement : MonoBehaviour
 {
     [Header("Car Component")]
     Rigidbody carRigidbody;
-    [SerializeField] private float mass = 10f;
+    [SerializeField] private float mass = 100f;
     [SerializeField] private Transform carTransform;
     [SerializeField] private WheelCollider[] wheelColliders;
     [SerializeField] private Transform[] wheelTransforms;
@@ -72,7 +72,7 @@ public class Car_movement : MonoBehaviour
             carRigidbody.AddForce(currentAccelerateForce * transform.forward);
         }
 
-        Debug.Log("currentAccelerateForce: " + currentAccelerateForce + " vertical:" + vertical + " currentSpeed: " + currentSpeed);
+        // Debug.Log("currentAccelerateForce: " + currentAccelerateForce + " vertical:" + vertical + " currentSpeed: " + currentSpeed);
     }
 
     public void Steering(float horizontal)
@@ -87,12 +87,14 @@ public class Car_movement : MonoBehaviour
             currentSteerAngle = Mathf.Lerp(currentSteerAngle, 0, Time.deltaTime * (currentAccelerateForce * 0.02f));
         }
 
-        wheelColliders[0].steerAngle = currentSteerAngle;
-        wheelColliders[1].steerAngle = currentSteerAngle;
+        // wheelColliders[0].steerAngle = currentSteerAngle;
+        // wheelColliders[1].steerAngle = currentSteerAngle;
+        
+        float torque = currentSteerAngle * currentAccelerateForce * 0.1f;
 
-        carRigidbody.AddTorque(currentSteerAngle * carTransform.up * currentAccelerateForce * 0.1f);
+        carRigidbody.AddTorque(carTransform.up * torque);
 
-        Debug.Log("currentSteerAngle: " + currentSteerAngle + " horizontal:" + Mathf.Abs(horizontal));
+        // Debug.Log("currentSteerAngle: " + currentSteerAngle + " horizontal:" + Mathf.Abs(horizontal));
     }
     
     public float GetCurrentSpeed { get { return currentSpeed; } }
