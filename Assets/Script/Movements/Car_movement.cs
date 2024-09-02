@@ -75,26 +75,43 @@ public class Car_movement : MonoBehaviour
         // Debug.Log("currentAccelerateForce: " + currentAccelerateForce + " vertical:" + vertical + " currentSpeed: " + currentSpeed);
     }
 
-    public void Steering(float horizontal)
+    private float Steeringconstant()
     {
-        if (Mathf.Abs(horizontal) > 0.05f)
+        float speedFactor = currentSpeed / maxSpeed * 10f;
+        float constant = 0f;
+
+        if (speedFactor < 1 && speedFactor >= 0)
         {
-            currentSteerAngle += steerRotatePerSecond * horizontal * Time.deltaTime;
-            currentSteerAngle = Mathf.Clamp(currentSteerAngle, -maxSteerAngle, maxSteerAngle);
+            constant = Mathf.Sin(speedFactor * Mathf.PI / 2);
+        }
+        else if (speedFactor >= 1)
+        {
+            constant = Mathf.Sin(0.164f * speedFactor + 1.5f);
+        }
+
+        return constant;
+    }
+    private void Steering(float horizontal)
+    {
+        float currentSpeed = carRigidbody.velocity.magnitude;
+        float constant = Steeringconstant();
+
+        if (Mathf.Abs(horizontal) >= 0.05f)
+        {
+            currentSteerAngle = constant * horizontal * steerRotatePerSecond;
         }
         else
         {
-            currentSteerAngle = Mathf.Lerp(currentSteerAngle, 0, Time.deltaTime * (currentAccelerateForce * 0.02f));
+            currentSteerAngle = Mathf.Lerp(currentSteerAngle, 0, Time.deltaTime * 5f);
         }
-
+        
         // wheelColliders[0].steerAngle = currentSteerAngle;
         // wheelColliders[1].steerAngle = currentSteerAngle;
+        // wheelColliders[2].steerAngle = currentSteerAngle;
+        // wheelColliders[3].steerAngle = currentSteerAngle;
+        //
+        carRigidbody.AddTorque(carTransform.up * currentSteerAngle * currentAccelerateForce);
         
-        float torque = currentSteerAngle * currentAccelerateForce * 0.1f;
-
-        carRigidbody.AddTorque(carTransform.up * torque);
-
-        // Debug.Log("currentSteerAngle: " + currentSteerAngle + " horizontal:" + Mathf.Abs(horizontal));
     }
     
     public float GetCurrentSpeed { get { return currentSpeed; } }
