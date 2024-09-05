@@ -7,20 +7,20 @@ public class Car_movement : MonoBehaviour
 {
     [Header("Car Component")]
     Rigidbody carRigidbody;
-    [SerializeField] private float mass = 100f;
+    private float mass = 20f;
     [SerializeField] private Transform carTransform;
     [SerializeField] private WheelCollider[] wheelColliders;
     [SerializeField] private Transform[] wheelTransforms;
 
     [Header("Car Max Value")]
-    private float maxSpeed = 100f;
+    private float maxSpeed = 50f;
     private float maxAccelerateForce = 1000f;
     private float maxBrakeForce = 800f;
     private float maxSteerAngle = 30f;
 
     [Header("Acceleration Value")]
     private float steerRotatePerSecond = 20f;
-    private float accelerateForcePerSecond = 1000f;
+    private float accelerateForcePerSecond = 700f;
     private float brakeForcePerSecond = 40f;
 
     [Header("Car Current Value")]
@@ -71,11 +71,9 @@ public class Car_movement : MonoBehaviour
         {
             carRigidbody.AddForce(currentAccelerateForce * transform.forward);
         }
-
-        // Debug.Log("currentAccelerateForce: " + currentAccelerateForce + " vertical:" + vertical + " currentSpeed: " + currentSpeed);
     }
 
-    private float Steeringconstant()
+    public float Steeringconstant()
     {
         float speedFactor = currentSpeed / maxSpeed * 10f;
         float constant = 0f;
@@ -87,18 +85,19 @@ public class Car_movement : MonoBehaviour
         else if (speedFactor >= 1)
         {
             constant = Mathf.Sin(0.164f * speedFactor + 1.5f);
+            Mathf.Max(constant, 0.1f);
         }
 
         return constant;
     }
-    private void Steering(float horizontal)
+    public void Steering(float horizontal)
     {
         float currentSpeed = carRigidbody.velocity.magnitude;
         float constant = Steeringconstant();
 
         if (Mathf.Abs(horizontal) >= 0.05f)
         {
-            currentSteerAngle = constant * horizontal * steerRotatePerSecond;
+            currentSteerAngle = constant * horizontal * steerRotatePerSecond * 10f;
         }
         else
         {
@@ -110,7 +109,7 @@ public class Car_movement : MonoBehaviour
         // wheelColliders[2].steerAngle = currentSteerAngle;
         // wheelColliders[3].steerAngle = currentSteerAngle;
         //
-        carRigidbody.AddTorque(carTransform.up * currentSteerAngle * currentAccelerateForce);
+        carRigidbody.rotation = Quaternion.Euler(carRigidbody.rotation.eulerAngles + new Vector3(0, currentSteerAngle * Time.deltaTime, 0));
         
     }
     

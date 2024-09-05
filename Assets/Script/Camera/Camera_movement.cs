@@ -17,6 +17,7 @@ public class Camera_movement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        
         transform.position = carTransform.position;
         transform.rotation = carTransform.rotation;
     }

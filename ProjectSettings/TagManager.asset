@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Track
   - Endline
+  - Bot
   layers:
   - Default
   - TransparentFX
