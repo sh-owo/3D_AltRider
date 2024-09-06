@@ -110,7 +110,6 @@ public class AI_Car_Movement : Agent
         sensor.AddObservation(carMovement.transform.rotation);
         if (currentindex < checkpointTransforms.Count)
         {
-            sensor.AddObservation(checkpointTransforms[currentindex].position);
             // 수정함! 다음 체크포인트까지의 방향 추가
             sensor.AddObservation(checkpointTransforms[currentindex].position - transform.position);
         }
