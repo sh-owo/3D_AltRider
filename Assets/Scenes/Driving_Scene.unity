@@ -241,7 +241,7 @@ GameObject:
   - component: {fileID: 162709167}
   m_Layer: 0
   m_Name: Endline
-  m_TagString: Track
+  m_TagString: Endline
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -451,7 +451,7 @@ GameObject:
   - component: {fileID: 373964790}
   m_Layer: 0
   m_Name: Checkpoint0
-  m_TagString: Untagged
+  m_TagString: CheckPoint
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1226,7 +1226,7 @@ GameObject:
   - component: {fileID: 1368291624}
   m_Layer: 0
   m_Name: Checkpoint2
-  m_TagString: Untagged
+  m_TagString: CheckPoint
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1331,7 +1331,7 @@ GameObject:
   - component: {fileID: 1409753744}
   m_Layer: 0
   m_Name: Checkpoint4
-  m_TagString: Untagged
+  m_TagString: CheckPoint
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1436,7 +1436,7 @@ GameObject:
   - component: {fileID: 1802839077}
   m_Layer: 0
   m_Name: Checkpoint3
-  m_TagString: Untagged
+  m_TagString: CheckPoint
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1624,7 +1624,7 @@ GameObject:
   - component: {fileID: 2067034448}
   m_Layer: 0
   m_Name: Checkpoint1
-  m_TagString: Untagged
+  m_TagString: CheckPoint
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1777,15 +1777,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4602211108005045150, guid: fa0b39d63dad94a8cbb61ab4d308f8b3, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 77.941
+      value: 78
       objectReference: {fileID: 0}
     - target: {fileID: 4602211108005045150, guid: fa0b39d63dad94a8cbb61ab4d308f8b3, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.401
+      value: 0.4
       objectReference: {fileID: 0}
     - target: {fileID: 4602211108005045150, guid: fa0b39d63dad94a8cbb61ab4d308f8b3, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 61.61
+      value: 60
       objectReference: {fileID: 0}
     - target: {fileID: 4602211108005045150, guid: fa0b39d63dad94a8cbb61ab4d308f8b3, type: 3}
       propertyPath: m_LocalRotation.w
@@ -1829,7 +1829,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5412377855439549074, guid: fa0b39d63dad94a8cbb61ab4d308f8b3, type: 3}
       propertyPath: m_BrainParameters.VectorObservationSize
-      value: 11
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 5412377855439549074, guid: fa0b39d63dad94a8cbb61ab4d308f8b3, type: 3}
       propertyPath: m_BrainParameters.VectorActionSize.Array.size
@@ -1891,7 +1891,7 @@ MonoBehaviour:
   m_RaysPerDirection: 16
   m_MaxRayDegrees: 105
   m_SphereCastRadius: 0.25
-  m_RayLength: 12
+  m_RayLength: 18
   m_RayLayerMask:
     serializedVersion: 2
     m_Bits: 4294967291
@@ -1930,7 +1930,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7900738919632103592, guid: a48cb232e3f0e48198716b5ce414259a, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 61.34
+      value: 60
       objectReference: {fileID: 0}
     - target: {fileID: 7900738919632103592, guid: a48cb232e3f0e48198716b5ce414259a, type: 3}
       propertyPath: m_LocalRotation.w

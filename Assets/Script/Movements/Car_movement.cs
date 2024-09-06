@@ -23,9 +23,9 @@ public class Car_movement : MonoBehaviour
     private float deAccelerateForcePerSecond = 300f;
 
     [Header("Car Current Value")]
-    [SerializeField] private float currentSteerAngle = 0f;
-    [SerializeField] private float currentAccelerateForce = 0f;
-    [SerializeField] private float currentSpeed = 0f;
+    public float currentSteerAngle = 0f;
+    public float currentAccelerateForce = 0f;
+    public float currentSpeed = 0f;
 
     void Awake()
     {
@@ -40,10 +40,20 @@ public class Car_movement : MonoBehaviour
         float horizontal = Input.GetAxis("Horizontal");
         Accelerate(vertical);
         Steering(horizontal);
+        Flip();
     }
 
     public float GetSpeed() => carRigidbody.velocity.magnitude;
-    
+
+
+    private void Flip()
+    {
+        if (!AreWheelsOnGround() && Input.GetKeyDown(KeyCode.R))
+        {
+            carTransform.position = new Vector3(carTransform.position.x, carTransform.position.y + 1f, carTransform.position.z);
+            carTransform.rotation = Quaternion.Euler(0, carTransform.rotation.eulerAngles.y, 0);
+        }
+    }
     private bool AreWheelsOnGround()
     {
         foreach (var wheel in wheels)
@@ -74,7 +84,6 @@ public class Car_movement : MonoBehaviour
         {
             if (currentAccelerateForce > 0) { currentAccelerateForce = -0.4f * currentAccelerateForce; }
             currentAccelerateForce += deAccelerateForcePerSecond * vertical * Time.deltaTime;
-            Debug.Log(currentAccelerateForce);
             currentAccelerateForce = Mathf.Clamp(currentAccelerateForce, -minAccelerateForce, maxAccelerateForce);
         }
         else
@@ -86,8 +95,6 @@ public class Car_movement : MonoBehaviour
             carRigidbody.AddForce(currentAccelerateForce * transform.forward);
         }
     }
-
-
 
     public float Steeringconstant()
     {
@@ -129,8 +136,6 @@ public class Car_movement : MonoBehaviour
 
     public void ResetCarValues()
     {
-        currentSpeed = 0f;
-        currentSteerAngle = 0f;
-        currentAccelerateForce = 0f;
+
     }
 }
