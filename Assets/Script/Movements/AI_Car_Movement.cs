@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.MLAgents;
@@ -17,33 +18,14 @@ public class AI_Car_Movement : Agent
     private Transform finishLine;
 
     private int currentindex = 0;
+    
 
-    public void Checkpoint_List()
-    {
-        checkpointTransforms = new List<Transform>();
-        for (int index = 0; index <= 4; index++)
-        {
-            string checkpointName = "Checkpoint " + index;
 
-            GameObject checkpointObject = GameObject.Find(checkpointName);
-
-            if (checkpointObject != null)
-            {
-                checkpointTransforms.Add(checkpointObject.transform);
-                Debug.Log("Loaded " + checkpointName + " checkpoints.");
-            }
-            else
-            {
-                Debug.LogWarning("GameObject not found: " + checkpointName);
-            }
-        }
-    }
 
     public override void Initialize()
     {
         finishLine = GameObject.Find("FinishLine").transform;
         Checkpoint_List();
-        carMovement = GetComponent<Car_movement>();
         previous_distance = float.MaxValue;
         initialPosition = transform.position;
         currentindex = 0;
@@ -128,8 +110,13 @@ public class AI_Car_Movement : Agent
     {
         if (collision.gameObject.CompareTag("Track"))
         {
-            SetReward(-0.3f);
+            SetReward(-0.7f);
             EndEpisode();
+        }
+
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            SetReward(-0.5f);
         }
     }
 
@@ -138,5 +125,27 @@ public class AI_Car_Movement : Agent
         var continuousActionsOut = actionsOut.ContinuousActions;
         continuousActionsOut[0] = Input.GetAxis("Vertical");
         continuousActionsOut[1] = Input.GetAxis("Horizontal");
+    }
+    
+    
+    public void Checkpoint_List()
+    {
+        checkpointTransforms = new List<Transform>();
+        for (int index = 0; index <= 4; index++)
+        {
+            string checkpointName = "Checkpoint " + index;
+
+            GameObject checkpointObject = GameObject.Find(checkpointName);
+
+            if (checkpointObject != null)
+            {
+                checkpointTransforms.Add(checkpointObject.transform);
+                Debug.Log("Loaded " + checkpointName + " checkpoints.");
+            }
+            else
+            {
+                Debug.LogWarning("GameObject not found: " + checkpointName);
+            }
+        }
     }
 }
