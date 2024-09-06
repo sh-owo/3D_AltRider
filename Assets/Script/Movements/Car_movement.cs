@@ -9,33 +9,28 @@ public class Car_movement : MonoBehaviour
     Rigidbody carRigidbody;
     private float mass = 20f;
     [SerializeField] private Transform carTransform;
-    [SerializeField] private WheelCollider[] wheelColliders;
-    [SerializeField] private Transform[] wheelTransforms;
+    [SerializeField] private Transform[] wheels;
 
     [Header("Car Max Value")]
     private float maxSpeed = 50f;
     private float maxAccelerateForce = 1000f;
-    private float maxBrakeForce = 800f;
+    private float minAccelerateForce = 800f;
     private float maxSteerAngle = 30f;
 
     [Header("Acceleration Value")]
     private float steerRotatePerSecond = 20f;
     private float accelerateForcePerSecond = 700f;
-    private float brakeForcePerSecond = 40f;
+    private float deAccelerateForcePerSecond = 300f;
 
     [Header("Car Current Value")]
     [SerializeField] private float currentSteerAngle = 0f;
     [SerializeField] private float currentAccelerateForce = 0f;
     [SerializeField] private float currentSpeed = 0f;
-    [SerializeField] private float currentBrakeForce = 0f;
 
     void Awake()
     {
         carRigidbody = GetComponent<Rigidbody>();
         carTransform = GetComponent<Transform>();
-        wheelColliders = GetComponentsInChildren<WheelCollider>();
-        wheelTransforms = GetComponentsInChildren<Transform>();
-
         carRigidbody.mass = mass;
     }
 
@@ -48,30 +43,51 @@ public class Car_movement : MonoBehaviour
     }
 
     public float GetSpeed() => carRigidbody.velocity.magnitude;
+    
+    private bool AreWheelsOnGround()
+    {
+        foreach (var wheel in wheels)
+        {
+            if (Physics.Raycast(wheel.position, -transform.up, out RaycastHit hit, 0.5f))
+            {
+                if (hit.collider != null)
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
     public void Accelerate(float vertical)
     {
+        if (!AreWheelsOnGround()) return;
+        
         currentSpeed = GetSpeed();
         if (vertical > 0.05f)
         {
+            if (currentAccelerateForce < 0) { currentAccelerateForce = -0.4f * currentAccelerateForce; }
             currentAccelerateForce += accelerateForcePerSecond * vertical * Time.deltaTime;
-            currentAccelerateForce = Mathf.Clamp(currentAccelerateForce, 0, maxAccelerateForce);
+            currentAccelerateForce = Mathf.Clamp(currentAccelerateForce,-minAccelerateForce, maxAccelerateForce);
         }
         else if (vertical < -0.05f)
         {
-            currentBrakeForce += brakeForcePerSecond * Mathf.Abs(vertical) * Time.deltaTime;
-            currentBrakeForce = Mathf.Clamp(currentBrakeForce, 0, maxBrakeForce);
+            if (currentAccelerateForce > 0) { currentAccelerateForce = -0.4f * currentAccelerateForce; }
+            currentAccelerateForce += deAccelerateForcePerSecond * vertical * Time.deltaTime;
+            Debug.Log(currentAccelerateForce);
+            currentAccelerateForce = Mathf.Clamp(currentAccelerateForce, -minAccelerateForce, maxAccelerateForce);
         }
         else
         {
             currentAccelerateForce = Mathf.Lerp(currentAccelerateForce, 0, Time.deltaTime * 5f);
-            currentBrakeForce = 0f;
         }
         if (currentSpeed < maxSpeed)
         {
             carRigidbody.AddForce(currentAccelerateForce * transform.forward);
         }
     }
+
+
 
     public float Steeringconstant()
     {
@@ -95,20 +111,8 @@ public class Car_movement : MonoBehaviour
         float currentSpeed = carRigidbody.velocity.magnitude;
         float constant = Steeringconstant();
 
-        if (Mathf.Abs(horizontal) >= 0.05f)
-        {
-            currentSteerAngle = constant * horizontal * steerRotatePerSecond * 10f;
-        }
-        else
-        {
-            currentSteerAngle = Mathf.Lerp(currentSteerAngle, 0, Time.deltaTime * 5f);
-        }
-        
-        // wheelColliders[0].steerAngle = currentSteerAngle;
-        // wheelColliders[1].steerAngle = currentSteerAngle;
-        // wheelColliders[2].steerAngle = currentSteerAngle;
-        // wheelColliders[3].steerAngle = currentSteerAngle;
-        //
+        if (Mathf.Abs(horizontal) >= 0.05f) { currentSteerAngle = constant * horizontal * steerRotatePerSecond * 10f; }
+        else { currentSteerAngle = Mathf.Lerp(currentSteerAngle, 0, Time.deltaTime * 5f); }
         carRigidbody.rotation = Quaternion.Euler(carRigidbody.rotation.eulerAngles + new Vector3(0, currentSteerAngle * Time.deltaTime, 0));
         
     }

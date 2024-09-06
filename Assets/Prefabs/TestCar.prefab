@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 548121023411252425}
   - component: {fileID: 8343220686288546447}
   m_Layer: 0
-  m_Name: Wheel (1)
+  m_Name: LeftRear
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -161,7 +161,7 @@ GameObject:
   - component: {fileID: 7037896679642223503}
   - component: {fileID: 1759077623409134560}
   m_Layer: 0
-  m_Name: Wheel
+  m_Name: RightRear
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -339,7 +339,7 @@ GameObject:
   - component: {fileID: 171198901341420820}
   - component: {fileID: 6570658477545785180}
   m_Layer: 0
-  m_Name: Wheel (2)
+  m_Name: RightFront
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -486,7 +486,7 @@ GameObject:
   - component: {fileID: 996908446452696170}
   - component: {fileID: 3849667895223152573}
   m_Layer: 0
-  m_Name: Wheel (3)
+  m_Name: LeftFront
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -632,6 +632,7 @@ GameObject:
   - component: {fileID: 1920051964912782786}
   - component: {fileID: 4286472173982525207}
   - component: {fileID: 3104630003256700259}
+  - component: {fileID: 4612689035037760577}
   m_Layer: 0
   m_Name: TestCar
   m_TagString: Player
@@ -653,8 +654,8 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5985699149672286631}
-  - {fileID: 5575471785628913145}
   - {fileID: 1787239732976123630}
+  - {fileID: 5575471785628913145}
   - {fileID: 3751917354159079524}
   - {fileID: 4267069047783970361}
   m_Father: {fileID: 0}
@@ -757,3 +758,24 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &4612689035037760577
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7140913459575903201}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6830a47a54eb8447d9afa9de72ab3457, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  carTransform: {fileID: 7900738919632103592}
+  wheels:
+  - {fileID: 3751917354159079524}
+  - {fileID: 1787239732976123630}
+  - {fileID: 5575471785628913145}
+  - {fileID: 5985699149672286631}
+  currentSteerAngle: 0
+  currentAccelerateForce: 0
+  currentSpeed: 0
