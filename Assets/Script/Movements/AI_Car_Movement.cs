@@ -19,17 +19,26 @@ public class AI_Car_Movement : Agent
 
     private int currentindex = 0;
     
-
-
+    // 수정함! 하이퍼파라미터 추가
+    private float checkpointReachDistance = 1f;
+    private float timeLimit = 10f;
+    private float maxSteps = 1000;
+    private float finishReward = 5f;
+    private float checkpointReward = 1f;
+    private float wrongDirectionPenalty = -1f;
+    private float timeoutPenalty = -0.5f;
+    private float trackCollisionPenalty = -0.7f;
+    private float playerCollisionPenalty = -0.5f;
 
     public override void Initialize()
     {
-        finishLine = GameObject.Find("FinishLine").transform;
+        finishLine = GameObject.Find("FinishLine")?.transform;
         Checkpoint_List();
         previous_distance = float.MaxValue;
         initialPosition = transform.position;
         currentindex = 0;
         time = 0f;
+        carMovement = GetComponent<Car_movement>();
     }
 
     public override void OnActionReceived(ActionBuffers actionBuffers)
@@ -44,18 +53,19 @@ public class AI_Car_Movement : Agent
         {
             float distanceToCheckpoint = Vector3.Distance(transform.position, checkpointTransforms[currentindex].position);
 
-            if (distanceToCheckpoint < 1f)
+            if (distanceToCheckpoint < checkpointReachDistance)
             {
                 currentindex++;
                 time = 0f;
+                SetReward(checkpointReward);  // 수정함! 체크포인트 도달 시 보상
             }
 
             if (currentindex == checkpointTransforms.Count)
             {
                 float distanceToFinish = Vector3.Distance(transform.position, finishLine.position);
-                if (distanceToFinish < 1f)
+                if (distanceToFinish < checkpointReachDistance)
                 {
-                    SetReward(5f);
+                    SetReward(finishReward);
                     Debug.Log("Finished");
                     EndEpisode();
                 }
@@ -63,19 +73,18 @@ public class AI_Car_Movement : Agent
 
             if (distanceToCheckpoint < previous_distance)
             {
-                if (distanceToCheckpoint < 5f)
-                {
-                    SetReward(1f);
-                }
+                // 수정함! 거리에 따른 세밀한 보상
+                float rewardMultiplier = 1f - (distanceToCheckpoint / previous_distance);
+                AddReward(rewardMultiplier * 0.1f);
             }
             else
             {
-                SetReward(-1f);
+                AddReward(wrongDirectionPenalty * Time.deltaTime);
             }
 
-            if (time > 10f)
+            if (time > timeLimit)
             {
-                SetReward(-0.5f);
+                AddReward(timeoutPenalty);
                 EndEpisode();
             }
 
@@ -87,7 +96,6 @@ public class AI_Car_Movement : Agent
     public override void OnEpisodeBegin()
     {
         carMovement.ResetCarValues();
-        carMovement.
         transform.position = initialPosition; 
         currentindex = 0;
         previous_distance = float.MaxValue;
@@ -96,13 +104,15 @@ public class AI_Car_Movement : Agent
 
     public override void CollectObservations(VectorSensor sensor)
     {
-        // sensor.AddObservation(carMovement.GetCurrentSpeed); 
+        sensor.AddObservation(carMovement.GetCurrentSpeed);  // 수정함! 속도 관찰 추가
         sensor.AddObservation(carMovement.GetCurrentSteerAngle);
         sensor.AddObservation(carMovement.transform.position);
         sensor.AddObservation(carMovement.transform.rotation);
         if (currentindex < checkpointTransforms.Count)
         {
             sensor.AddObservation(checkpointTransforms[currentindex].position);
+            // 수정함! 다음 체크포인트까지의 방향 추가
+            sensor.AddObservation(checkpointTransforms[currentindex].position - transform.position);
         }
     }
 
@@ -110,13 +120,13 @@ public class AI_Car_Movement : Agent
     {
         if (collision.gameObject.CompareTag("Track"))
         {
-            SetReward(-0.7f);
+            AddReward(trackCollisionPenalty);
             EndEpisode();
         }
 
         if (collision.gameObject.CompareTag("Player"))
         {
-            SetReward(-0.5f);
+            AddReward(playerCollisionPenalty);
         }
     }
 
@@ -126,7 +136,6 @@ public class AI_Car_Movement : Agent
         continuousActionsOut[0] = Input.GetAxis("Vertical");
         continuousActionsOut[1] = Input.GetAxis("Horizontal");
     }
-    
     
     public void Checkpoint_List()
     {
