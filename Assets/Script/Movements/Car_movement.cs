@@ -13,7 +13,7 @@ public class Car_movement : MonoBehaviour
     [SerializeField] private Transform[] wheelTransforms;
 
     [Header("Car Max Value")]
-    private float maxSpeed = 50f;
+    [SerializeField] private const float maxSpeed = 20.0f;
     private float maxAccelerateForce = 1000f;
     private float maxBrakeForce = 800f;
     private float maxSteerAngle = 30f;
