@@ -12,7 +12,7 @@ public class Car_movement : MonoBehaviour
     [SerializeField] private Transform[] wheels;
 
     [Header("Car Max Value")]
-    private float maxSpeed = 50f;
+    private float maxSpeed = 40f;
     private float maxAccelerateForce = 1000f;
     private float minAccelerateForce = 800f;
     private float maxSteerAngle = 30f;

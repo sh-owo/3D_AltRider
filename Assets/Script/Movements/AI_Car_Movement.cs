@@ -104,7 +104,7 @@ public class AI_Car_Movement : Agent
 
     public override void CollectObservations(VectorSensor sensor)
     {
-        sensor.AddObservation(carMovement.GetCurrentSpeed);//1
+        // sensor.AddObservation(carMovement.GetCurrentSpeed);
         sensor.AddObservation(carMovement.GetCurrentSteerAngle);//1
         sensor.AddObservation(carMovement.transform.position);//3
         sensor.AddObservation(carMovement.transform.rotation);//4
@@ -112,7 +112,7 @@ public class AI_Car_Movement : Agent
         {
             sensor.AddObservation(checkpointTransforms[currentindex].position - transform.position);//3
         }
-    }//1+1+3+4+3 = 12
+    }//1+3+4+3 = 11
 
     public void OnCollisionEnter(Collision collision)
     {
