@@ -37,7 +37,12 @@ public class AI_Car_Movement : Agent
         currentindex = 0;
         time = 0f;
         carMovement = GetComponent<Car_movement>();
+        if (carMovement == null)
+        {
+            carMovement = FindObjectOfType<Car_movement>();
+        }
     }
+
 
     public override void OnActionReceived(ActionBuffers actionBuffers)
     {
@@ -93,9 +98,17 @@ public class AI_Car_Movement : Agent
 
     public override void OnEpisodeBegin()
     { 
-        carMovement.currentSpeed = 0f;
-        carMovement.currentSteerAngle = 0f;
-        carMovement.currentAccelerateForce = 0f;
+        if (carMovement != null)
+        {
+            carMovement.currentSpeed = 0f;
+            carMovement.currentSteerAngle = 0f;
+            carMovement.currentAccelerateForce = 0f;
+        }
+        else
+        {
+            Debug.LogError("carMovement is null in OnEpisodeBegin!");
+        }
+    
         transform.position = initialPosition; 
         transform.rotation = Quaternion.Euler(0, 0, 0);
         currentindex = 0;

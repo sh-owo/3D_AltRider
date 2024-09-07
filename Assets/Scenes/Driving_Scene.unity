@@ -1899,7 +1899,7 @@ MonoBehaviour:
   m_DetectableTags:
   - Track
   - Player
-  m_RaysPerDirection: 16
+  m_RaysPerDirection: 12
   m_MaxRayDegrees: 105
   m_SphereCastRadius: 0.25
   m_RayLength: 18
