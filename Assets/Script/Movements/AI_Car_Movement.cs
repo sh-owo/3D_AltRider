@@ -93,10 +93,11 @@ public class AI_Car_Movement : Agent
 
     public override void OnEpisodeBegin()
     { 
-        // carMovement.currentSpeed = 0f;
-        // carMovement.currentSteerAngle = 0f;
-        // carMovement.currentAccelerateForce = 0f;
+        carMovement.currentSpeed = 0f;
+        carMovement.currentSteerAngle = 0f;
+        carMovement.currentAccelerateForce = 0f;
         transform.position = initialPosition; 
+        transform.rotation = Quaternion.Euler(0, 0, 0);
         currentindex = 0;
         previous_distance = float.MaxValue;
         time = 0f;
