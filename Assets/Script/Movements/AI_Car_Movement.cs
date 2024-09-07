@@ -118,7 +118,7 @@ public class AI_Car_Movement : Agent
 
     public override void CollectObservations(VectorSensor sensor)
     {
-        sensor.AddObservation(carMovement.GetCurrentSpeed);//1
+        // sensor.AddObservation(carMovement.GetCurrentSpeed);//1
         sensor.AddObservation(carMovement.GetCurrentSteerAngle);//1
         sensor.AddObservation(carMovement.transform.position);//3
         sensor.AddObservation(carMovement.transform.rotation);//4

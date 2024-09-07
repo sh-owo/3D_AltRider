@@ -51,7 +51,7 @@ public class Car_movement : MonoBehaviour
         if (!AreWheelsOnGround() && Input.GetKeyDown(KeyCode.R))
         {
             carTransform.position = new Vector3(carTransform.position.x, carTransform.position.y + 1f, carTransform.position.z);
-            carTransform.rotation = Quaternion.Euler(0, carTransform.rotation.eulerAngles.y, 0);
+            carTransform.rotation = Quaternion.Euler(carTransform.rotation.x, carTransform.rotation.eulerAngles.y, 0);
         }
     }
     private bool AreWheelsOnGround()
