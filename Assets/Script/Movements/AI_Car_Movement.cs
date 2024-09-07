@@ -19,17 +19,24 @@ public class AI_Car_Movement : Agent
 
     private int currentindex = 0;
     
-
-
+    private float checkpointReachDistance = 1f;
+    private float timeLimit = 10f;
+    private float finishReward = 5f;
+    private float checkpointReward = 1f;
+    private float wrongDirectionPenalty = -0.1f;
+    private float timeoutPenalty = -0.5f;
+    private float trackCollisionPenalty = -0.7f;
+    private float playerCollisionPenalty = -0.5f;
 
     public override void Initialize()
     {
-        finishLine = GameObject.Find("FinishLine").transform;
-        Checkpoint_List();
+        finishLine = GameObject.Find("FinishLine")?.transform;
+        CheckpointList();
         previous_distance = float.MaxValue;
         initialPosition = transform.position;
         currentindex = 0;
         time = 0f;
+        carMovement = GetComponent<Car_movement>();
     }
 
     public override void OnActionReceived(ActionBuffers actionBuffers)
@@ -44,18 +51,19 @@ public class AI_Car_Movement : Agent
         {
             float distanceToCheckpoint = Vector3.Distance(transform.position, checkpointTransforms[currentindex].position);
 
-            if (distanceToCheckpoint < 1f)
+            if (distanceToCheckpoint < checkpointReachDistance)
             {
                 currentindex++;
                 time = 0f;
+                SetReward(checkpointReward);  // 수정함! 체크포인트 도달 시 보상
             }
 
             if (currentindex == checkpointTransforms.Count)
             {
                 float distanceToFinish = Vector3.Distance(transform.position, finishLine.position);
-                if (distanceToFinish < 1f)
+                if (distanceToFinish < 0.1f)
                 {
-                    SetReward(5f);
+                    SetReward(finishReward);
                     Debug.Log("Finished");
                     EndEpisode();
                 }
@@ -63,19 +71,18 @@ public class AI_Car_Movement : Agent
 
             if (distanceToCheckpoint < previous_distance)
             {
-                if (distanceToCheckpoint < 5f)
-                {
-                    SetReward(1f);
-                }
+                // 수정함! 거리에 따른 세밀한 보상
+                float rewardMultiplier = 1f - (distanceToCheckpoint / previous_distance);
+                AddReward(rewardMultiplier * 0.1f);
             }
             else
             {
-                SetReward(-1f);
+                AddReward(wrongDirectionPenalty * Time.deltaTime);
             }
 
-            if (time > 10f)
+            if (time > timeLimit)
             {
-                SetReward(-0.5f);
+                AddReward(timeoutPenalty);
                 EndEpisode();
             }
 
@@ -85,9 +92,10 @@ public class AI_Car_Movement : Agent
     }
 
     public override void OnEpisodeBegin()
-    {
-        carMovement.ResetCarValues();
-        carMovement.
+    { 
+        // carMovement.currentSpeed = 0f;
+        // carMovement.currentSteerAngle = 0f;
+        // carMovement.currentAccelerateForce = 0f;
         transform.position = initialPosition; 
         currentindex = 0;
         previous_distance = float.MaxValue;
@@ -96,27 +104,27 @@ public class AI_Car_Movement : Agent
 
     public override void CollectObservations(VectorSensor sensor)
     {
-        // sensor.AddObservation(carMovement.GetCurrentSpeed); 
-        sensor.AddObservation(carMovement.GetCurrentSteerAngle);
-        sensor.AddObservation(carMovement.transform.position);
-        sensor.AddObservation(carMovement.transform.rotation);
+        // sensor.AddObservation(carMovement.GetCurrentSpeed);
+        sensor.AddObservation(carMovement.GetCurrentSteerAngle);//1
+        sensor.AddObservation(carMovement.transform.position);//3
+        sensor.AddObservation(carMovement.transform.rotation);//4
         if (currentindex < checkpointTransforms.Count)
         {
-            sensor.AddObservation(checkpointTransforms[currentindex].position);
+            sensor.AddObservation(checkpointTransforms[currentindex].position - transform.position);//3
         }
-    }
+    }//1+3+4+3 = 11
 
     public void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag("Track"))
         {
-            SetReward(-0.7f);
+            AddReward(trackCollisionPenalty);
             EndEpisode();
         }
 
         if (collision.gameObject.CompareTag("Player"))
         {
-            SetReward(-0.5f);
+            AddReward(playerCollisionPenalty);
         }
     }
 
@@ -127,25 +135,17 @@ public class AI_Car_Movement : Agent
         continuousActionsOut[1] = Input.GetAxis("Horizontal");
     }
     
-    
-    public void Checkpoint_List()
+    public void CheckpointList()
     {
         checkpointTransforms = new List<Transform>();
-        for (int index = 0; index <= 4; index++)
+        GameObject[] checkpoints = GameObject.FindGameObjectsWithTag("CheckPoint");
+    
+        foreach (GameObject checkpoint in checkpoints)
         {
-            string checkpointName = "Checkpoint " + index;
-
-            GameObject checkpointObject = GameObject.Find(checkpointName);
-
-            if (checkpointObject != null)
-            {
-                checkpointTransforms.Add(checkpointObject.transform);
-                Debug.Log("Loaded " + checkpointName + " checkpoints.");
-            }
-            else
-            {
-                Debug.LogWarning("GameObject not found: " + checkpointName);
-            }
+            checkpointTransforms.Add(checkpoint.transform);
         }
+    
+        checkpointTransforms.Sort((a, b) => a.name.CompareTo(b.name));
+        Debug.Log("Loaded " + checkpointTransforms.Count + " checkpoints.");
     }
 }

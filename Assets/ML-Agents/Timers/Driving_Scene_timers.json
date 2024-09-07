@@ -1,1 +1,4 @@
 {"count":1,"self":81.0385728,"total":81.0425717,"children":{"InitializeActuators":{"count":2,"self":0.0010006,"total":0.0010006,"children":null},"InitializeSensors":{"count":1,"self":0.0020009,"total":0.0020009,"children":null}},"gauges":{},"metadata":{"timer_format_version":"0.1.0","start_time_seconds":"1725720716","unity_version":"2022.3.30f1","command_line_arguments":"C:\\Program Files\\Unity\\Hub\\Editor\\2022.3.30f1\\Editor\\Unity.exe -projectpath C:\\Users\\konod\\Documents\\GitHub\\3D_AltRider -useHub -hubIPC -cloudEnvironment production -licensingIpc LicenseClient-konod -hubSessionId 6266c9a3-3b47-410d-93e5-8f700944664f -accessToken 13CpOb7zayfhGvQcKVSh177xsAl_8Rt9mIFbHqL4-PE00df","communication_protocol_version":"1.5.0","com.unity.ml-agents_version":"2.0.1","scene_name":"Driving_Scene","end_time_seconds":"1725720797"}}
+
+
+
