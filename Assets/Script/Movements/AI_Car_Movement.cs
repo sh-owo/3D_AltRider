@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Barracuda;
 using Unity.MLAgents;
 using Unity.MLAgents.Sensors;
 using Unity.MLAgents.Actuators;
@@ -8,7 +9,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 
 public class AI_Car_Movement : Agent
-{
+{   
     private float time;
     private Vector3 initialPosition;
 
@@ -18,7 +19,7 @@ public class AI_Car_Movement : Agent
     private Transform finishLine;
 
     private int currentindex = 0;
-    
+
     private float checkpointReachDistance = 1f;
     private float timeLimit = 10f;
     private float finishReward = 5f;
@@ -41,16 +42,28 @@ public class AI_Car_Movement : Agent
         {
             carMovement = FindObjectOfType<Car_movement>();
         }
+        if (carMovement == null)
+        {
+            Debug.LogError("Car_movement component not found!");
+        }
     }
-
 
     public override void OnActionReceived(ActionBuffers actionBuffers)
     {
         float vertical = actionBuffers.ContinuousActions[0];
         float horizontal = actionBuffers.ContinuousActions[1];
+        Debug.Log("Vertical: " + vertical + " Horizontal: " + horizontal);
 
-        carMovement.Accelerate(vertical);
-        carMovement.Steering(horizontal);
+        if (carMovement != null)
+        {
+            carMovement.Accelerate(vertical);
+            
+            carMovement.Steering(horizontal);
+        }
+        else
+        {
+            Debug.LogError("carMovement is null in OnActionReceived!");
+        }
 
         if (currentindex < checkpointTransforms.Count)
         {
@@ -60,7 +73,7 @@ public class AI_Car_Movement : Agent
             {
                 currentindex++;
                 time = 0f;
-                SetReward(checkpointReward);  // 수정함! 체크포인트 도달 시 보상
+                SetReward(checkpointReward);
             }
 
             if (currentindex == checkpointTransforms.Count)
@@ -76,7 +89,6 @@ public class AI_Car_Movement : Agent
 
             if (distanceToCheckpoint < previous_distance)
             {
-                // 수정함! 거리에 따른 세밀한 보상
                 float rewardMultiplier = 1f - (distanceToCheckpoint / previous_distance);
                 AddReward(rewardMultiplier * 0.1f);
             }
@@ -97,7 +109,7 @@ public class AI_Car_Movement : Agent
     }
 
     public override void OnEpisodeBegin()
-    { 
+    {
         if (carMovement != null)
         {
             carMovement.currentSpeed = 0f;
@@ -108,8 +120,8 @@ public class AI_Car_Movement : Agent
         {
             Debug.LogError("carMovement is null in OnEpisodeBegin!");
         }
-    
-        transform.position = initialPosition; 
+
+        transform.position = initialPosition;
         transform.rotation = Quaternion.Euler(0, 0, 0);
         currentindex = 0;
         previous_distance = float.MaxValue;
@@ -118,15 +130,14 @@ public class AI_Car_Movement : Agent
 
     public override void CollectObservations(VectorSensor sensor)
     {
-        // sensor.AddObservation(carMovement.GetCurrentSpeed);//1
-        sensor.AddObservation(carMovement.GetCurrentSteerAngle);//1
-        sensor.AddObservation(carMovement.transform.position);//3
-        sensor.AddObservation(carMovement.transform.rotation);//4
+        sensor.AddObservation(carMovement.GetCurrentSteerAngle);
+        sensor.AddObservation(carMovement.transform.position);
+        sensor.AddObservation(carMovement.transform.rotation);
         if (currentindex < checkpointTransforms.Count)
         {
-            sensor.AddObservation(checkpointTransforms[currentindex].position - transform.position);//3
+            sensor.AddObservation(checkpointTransforms[currentindex].position - transform.position);
         }
-    }//1+1+3+4+3 = 12
+    }
 
     public void OnCollisionEnter(Collision collision)
     {
@@ -148,17 +159,17 @@ public class AI_Car_Movement : Agent
         continuousActionsOut[0] = Input.GetAxis("Vertical");
         continuousActionsOut[1] = Input.GetAxis("Horizontal");
     }
-    
+
     public void CheckpointList()
     {
         checkpointTransforms = new List<Transform>();
         GameObject[] checkpoints = GameObject.FindGameObjectsWithTag("CheckPoint");
-    
+
         foreach (GameObject checkpoint in checkpoints)
         {
             checkpointTransforms.Add(checkpoint.transform);
         }
-    
+
         checkpointTransforms.Sort((a, b) => a.name.CompareTo(b.name));
         Debug.Log("Loaded " + checkpointTransforms.Count + " checkpoints.");
     }

@@ -34,7 +34,7 @@ public class Car_movement : MonoBehaviour
         carRigidbody.mass = mass;
     }
 
-    private void FixedUpdate()
+    void FixedUpdate()
     {
         float vertical = Input.GetAxis("Vertical");
         float horizontal = Input.GetAxis("Horizontal");
@@ -92,7 +92,7 @@ public class Car_movement : MonoBehaviour
         }
         if (currentSpeed < maxSpeed)
         {
-            carRigidbody.AddForce(currentAccelerateForce * transform.forward);
+            this.carRigidbody.AddForce(currentAccelerateForce * transform.forward);
         }
     }
 
@@ -120,7 +120,7 @@ public class Car_movement : MonoBehaviour
 
         if (Mathf.Abs(horizontal) >= 0.05f) { currentSteerAngle = constant * horizontal * steerRotatePerSecond * 10f; }
         else { currentSteerAngle = Mathf.Lerp(currentSteerAngle, 0, Time.deltaTime * 5f); }
-        carRigidbody.rotation = Quaternion.Euler(carRigidbody.rotation.eulerAngles + new Vector3(0, currentSteerAngle * Time.deltaTime, 0));
+        this.carRigidbody.rotation = Quaternion.Euler(carRigidbody.rotation.eulerAngles + new Vector3(0, currentSteerAngle * Time.deltaTime, 0));
         
     }
     

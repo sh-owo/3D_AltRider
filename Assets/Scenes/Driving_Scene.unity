@@ -1721,16 +1721,20 @@ PrefabInstance:
       value: AIBehavior
       objectReference: {fileID: 0}
     - target: {fileID: 5412377855439549074, guid: fa0b39d63dad94a8cbb61ab4d308f8b3, type: 3}
+      propertyPath: m_BehaviorType
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5412377855439549074, guid: fa0b39d63dad94a8cbb61ab4d308f8b3, type: 3}
       propertyPath: m_BrainParameters.VectorActionSpaceType
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5412377855439549074, guid: fa0b39d63dad94a8cbb61ab4d308f8b3, type: 3}
       propertyPath: m_BrainParameters.VectorObservationSize
-      value: 12
+      value: 11
       objectReference: {fileID: 0}
     - target: {fileID: 5412377855439549074, guid: fa0b39d63dad94a8cbb61ab4d308f8b3, type: 3}
       propertyPath: m_BrainParameters.VectorActionSize.Array.size
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5412377855439549074, guid: fa0b39d63dad94a8cbb61ab4d308f8b3, type: 3}
       propertyPath: m_BrainParameters.NumStackedVectorObservations
@@ -1742,7 +1746,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5412377855439549074, guid: fa0b39d63dad94a8cbb61ab4d308f8b3, type: 3}
       propertyPath: m_BrainParameters.m_ActionSpec.BranchSizes.Array.size
-      value: 0
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5412377855439549074, guid: fa0b39d63dad94a8cbb61ab4d308f8b3, type: 3}
+      propertyPath: m_BrainParameters.m_ActionSpec.BranchSizes.Array.data[0]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5412377855439549074, guid: fa0b39d63dad94a8cbb61ab4d308f8b3, type: 3}
+      propertyPath: m_BrainParameters.m_ActionSpec.BranchSizes.Array.data[1]
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5424234007807018319, guid: fa0b39d63dad94a8cbb61ab4d308f8b3, type: 3}
       propertyPath: m_Enabled
@@ -1756,9 +1768,17 @@ PrefabInstance:
       propertyPath: TakeActionsBetweenDecisions
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7225844645675974289, guid: fa0b39d63dad94a8cbb61ab4d308f8b3, type: 3}
+      propertyPath: MaxStep
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8291161102514814907, guid: fa0b39d63dad94a8cbb61ab4d308f8b3, type: 3}
       propertyPath: m_Drag
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8291161102514814907, guid: fa0b39d63dad94a8cbb61ab4d308f8b3, type: 3}
+      propertyPath: m_Mass
+      value: 70
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1767,6 +1787,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 2175412295299089068, guid: fa0b39d63dad94a8cbb61ab4d308f8b3, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3458681277731118424}
+    - targetCorrespondingSourceObject: {fileID: 2175412295299089068, guid: fa0b39d63dad94a8cbb61ab4d308f8b3, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3589133302501793787}
   m_SourcePrefab: {fileID: 100100000, guid: fa0b39d63dad94a8cbb61ab4d308f8b3, type: 3}
 --- !u!1 &2067034446
 GameObject:
@@ -1914,6 +1937,28 @@ MonoBehaviour:
 --- !u!1 &3589133302501793786 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2175412295299089068, guid: fa0b39d63dad94a8cbb61ab4d308f8b3, type: 3}
+  m_PrefabInstance: {fileID: 2022692257}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &3589133302501793787
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3589133302501793786}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6830a47a54eb8447d9afa9de72ab3457, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  carTransform: {fileID: 3589133302501793795}
+  wheels: []
+  currentSteerAngle: 0
+  currentAccelerateForce: 0
+  currentSpeed: 0
+--- !u!4 &3589133302501793795 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4602211108005045150, guid: fa0b39d63dad94a8cbb61ab4d308f8b3, type: 3}
   m_PrefabInstance: {fileID: 2022692257}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &6819751175935388302 stripped
