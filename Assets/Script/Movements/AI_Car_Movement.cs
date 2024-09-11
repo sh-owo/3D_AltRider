@@ -28,15 +28,28 @@ public class AI_Car_Movement : Agent
     private float timeoutPenalty = -0.5f;
     private float trackCollisionPenalty = -0.7f;
     private float playerCollisionPenalty = -0.5f;
-
-    public override void Initialize()
+    
+    private void Awake()
     {
-        finishLine = GameObject.Find("FinishLine")?.transform;
-        CheckpointList();
-        previous_distance = float.MaxValue;
-        initialPosition = transform.position;
-        currentindex = 0;
-        time = 0f;
+        InitializeCarMovement();
+    }
+
+    private void InitializeCarMovement()
+    {
+        carMovement = GetComponent<Car_movement>();
+        if (carMovement == null)
+        {
+            Debug.LogError("Car_movement component not found on this GameObject!");
+        }
+        else
+        {
+            carMovement.isAIControlled = true;
+        }
+    }
+
+
+    /*private void InitializeCarMovement()
+    {
         carMovement = GetComponent<Car_movement>();
         if (carMovement == null)
         {
@@ -46,23 +59,38 @@ public class AI_Car_Movement : Agent
         {
             Debug.LogError("Car_movement component not found!");
         }
+    }*/
+
+    public override void Initialize()
+    {
+        finishLine = GameObject.Find("FinishLine")?.transform;
+        CheckpointList();
+        previous_distance = float.MaxValue;
+        initialPosition = transform.position;
+        currentindex = 0;
+        time = 0f;
+
+        if (carMovement == null)
+        {
+            Debug.LogError("Car_movement component is still null in Initialize!");
+        }
     }
 
     public override void OnActionReceived(ActionBuffers actionBuffers)
     {
-        float vertical = actionBuffers.ContinuousActions[0];
-        float horizontal = actionBuffers.ContinuousActions[1];
-        Debug.Log("Vertical: " + vertical + " Horizontal: " + horizontal);
-
-        if (carMovement != null)
+        if (carMovement != null && carMovement.isAIControlled)
         {
+            float vertical = actionBuffers.ContinuousActions[0];
+            float horizontal = actionBuffers.ContinuousActions[1];
+
             carMovement.Accelerate(vertical);
-            
             carMovement.Steering(horizontal);
+            Debug.Log("Vertical: " + vertical + " Horizontal: " + horizontal);
         }
         else
         {
-            Debug.LogError("carMovement is null in OnActionReceived!");
+            Debug.LogError("carMovement is null or not AI controlled in OnActionReceived!");
+            return;
         }
 
         if (currentindex < checkpointTransforms.Count)
@@ -155,9 +183,13 @@ public class AI_Car_Movement : Agent
 
     public override void Heuristic(in ActionBuffers actionsOut)
     {
-        var continuousActionsOut = actionsOut.ContinuousActions;
-        continuousActionsOut[0] = Input.GetAxis("Vertical");
-        continuousActionsOut[1] = Input.GetAxis("Horizontal");
+        if (!carMovement.isAIControlled)
+        {
+            var continuousActionsOut = actionsOut.ContinuousActions;
+            continuousActionsOut[0] = Input.GetAxis("Vertical");
+            continuousActionsOut [1] = Input.GetAxis("Horizontal");
+        }
+        // AI 모드일 때는 아무 것도 하지 않음
     }
 
     public void CheckpointList()

@@ -26,7 +26,9 @@ public class Car_movement : MonoBehaviour
     public float currentSteerAngle = 0f;
     public float currentAccelerateForce = 0f;
     public float currentSpeed = 0f;
-
+    
+    public bool isAIControlled = false;
+    
     void Awake()
     {
         carRigidbody = GetComponent<Rigidbody>();
@@ -36,13 +38,16 @@ public class Car_movement : MonoBehaviour
 
     void FixedUpdate()
     {
-        float vertical = Input.GetAxis("Vertical");
-        float horizontal = Input.GetAxis("Horizontal");
-        Accelerate(vertical);
-        Steering(horizontal);
+        if (!isAIControlled)
+        {
+            float vertical = Input.GetAxis("Vertical");
+            float horizontal = Input.GetAxis("Horizontal");
+            Accelerate(vertical);
+            Steering(horizontal);
+        }
         Flip();
     }
-
+    
     public float GetSpeed() => carRigidbody.velocity.magnitude;
 
 
