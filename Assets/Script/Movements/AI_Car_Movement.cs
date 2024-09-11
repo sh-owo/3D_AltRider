@@ -33,6 +33,15 @@ public class AI_Car_Movement : Agent
     {
         InitializeCarMovement();
     }
+    
+    private void FixedUpdate()
+    {
+        if (carMovement != null && carMovement.isAIControlled)
+        {
+            // ML-Agents의 결정을 요청
+            RequestDecision();
+        }
+    }
 
     private void InitializeCarMovement()
     {
@@ -46,20 +55,7 @@ public class AI_Car_Movement : Agent
             carMovement.isAIControlled = true;
         }
     }
-
-
-    /*private void InitializeCarMovement()
-    {
-        carMovement = GetComponent<Car_movement>();
-        if (carMovement == null)
-        {
-            carMovement = FindObjectOfType<Car_movement>();
-        }
-        if (carMovement == null)
-        {
-            Debug.LogError("Car_movement component not found!");
-        }
-    }*/
+    
 
     public override void Initialize()
     {
@@ -85,7 +81,9 @@ public class AI_Car_Movement : Agent
 
             carMovement.Accelerate(vertical);
             carMovement.Steering(horizontal);
-            Debug.Log("Vertical: " + vertical + " Horizontal: " + horizontal);
+
+            // Debug.Log($"AI Action - Vertical: {vertical}, Horizontal: {horizontal}");
+            // Debug.Log($"Car Position: {transform.position}, Velocity: {carMovement.GetCurrentSpeed}");
         }
         else
         {

@@ -651,6 +651,7 @@ MonoBehaviour:
   currentSteerAngle: 0
   currentAccelerateForce: 0
   currentSpeed: 0
+  isAIControlled: 0
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -1790,6 +1791,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 2175412295299089068, guid: fa0b39d63dad94a8cbb61ab4d308f8b3, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3589133302501793803}
+    - targetCorrespondingSourceObject: {fileID: 2175412295299089068, guid: fa0b39d63dad94a8cbb61ab4d308f8b3, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3589133302501793811}
   m_SourcePrefab: {fileID: 100100000, guid: fa0b39d63dad94a8cbb61ab4d308f8b3, type: 3}
 --- !u!1 &2067034446
 GameObject:
@@ -1939,11 +1943,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 2175412295299089068, guid: fa0b39d63dad94a8cbb61ab4d308f8b3, type: 3}
   m_PrefabInstance: {fileID: 2022692257}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &3589133302501793795 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 4602211108005045150, guid: fa0b39d63dad94a8cbb61ab4d308f8b3, type: 3}
-  m_PrefabInstance: {fileID: 2022692257}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &3589133302501793803
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1956,11 +1955,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4dfd81fd1dffe47f6bf61816bce562ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  carTransform: {fileID: 3589133302501793795}
+--- !u!114 &3589133302501793811
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3589133302501793786}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6830a47a54eb8447d9afa9de72ab3457, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  carTransform: {fileID: 0}
   wheels: []
   currentSteerAngle: 0
   currentAccelerateForce: 0
   currentSpeed: 0
+  isAIControlled: 0
 --- !u!4 &6819751175935388302 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4267069047783970361, guid: a48cb232e3f0e48198716b5ce414259a, type: 3}
