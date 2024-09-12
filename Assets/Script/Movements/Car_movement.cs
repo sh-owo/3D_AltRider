@@ -15,10 +15,9 @@ public class Car_movement : MonoBehaviour
     private float maxSpeed = 50f;
     private float maxAccelerateForce = 1000f;
     private float minAccelerateForce = 800f;
-    private float maxSteerAngle = 30f;
 
     [Header("Acceleration Value")]
-    private float steerRotatePerSecond = 20f;
+    private float steerRotatePerSecond = 30f;
     private float accelerateForcePerSecond = 700f;
     private float deAccelerateForcePerSecond = 300f;
 
@@ -40,12 +39,11 @@ public class Car_movement : MonoBehaviour
         float horizontal = Input.GetAxis("Horizontal");
         Accelerate(vertical);
         Steering(horizontal);
-        //Flip();
+        Flip();
     }
-
+    
     public float GetSpeed() => carRigidbody.velocity.magnitude;
-
-   /*
+    
     private void Flip()
     {
         if (!AreWheelsOnGround() && Input.GetKeyDown(KeyCode.R))
@@ -67,11 +65,11 @@ public class Car_movement : MonoBehaviour
             }
         }
         return false;
-    }*/
+    }
 
     public void Accelerate(float vertical)
     {
-        /*if (!AreWheelsOnGround()) return;*/
+        // if (!AreWheelsOnGround()) return;
         
         currentSpeed = GetSpeed();
         if (vertical > 0.05f)
@@ -107,8 +105,8 @@ public class Car_movement : MonoBehaviour
         }
         else if (speedFactor >= 1)
         {
-            constant = Mathf.Sin(0.164f * speedFactor + 1.5f);
-            Mathf.Max(constant, 0.1f);
+            constant = Mathf.Sin(0.14f * speedFactor + 1.5f);
+            Mathf.Max(constant, 0.5f);
         }
 
         return constant;
@@ -117,6 +115,8 @@ public class Car_movement : MonoBehaviour
     {
         float currentSpeed = carRigidbody.velocity.magnitude;
         float constant = Steeringconstant();
+        
+
 
         if (Mathf.Abs(horizontal) >= 0.05f) { currentSteerAngle = constant * horizontal * steerRotatePerSecond * 10f; }
         else { currentSteerAngle = Mathf.Lerp(currentSteerAngle, 0, Time.deltaTime * 5f); }
