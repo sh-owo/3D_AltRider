@@ -11,7 +11,7 @@ public class TimeDisplay : MonoBehaviour
 
     void Start()
     {
-        StartCoroutine(StartTimerAfterDelay(3.0f)); // 3초 후 타이머 시작
+        StartCoroutine(StartTimerAfterDelay(12.0f)); // 12초 후 타이머 시작
     }
 
     IEnumerator StartTimerAfterDelay(float delay)
