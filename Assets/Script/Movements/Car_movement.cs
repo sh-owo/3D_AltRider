@@ -12,13 +12,13 @@ public class Car_movement : MonoBehaviour
     [SerializeField] private Transform[] wheels;
 
     [Header("Car Max Value")]
-    private float maxSpeed = 50f;
+    private float maxSpeed = 40f;
     private float maxAccelerateForce = 1000f;
     private float minAccelerateForce = 800f;
 
     [Header("Acceleration Value")]
     private float steerRotatePerSecond = 30f;
-    private float accelerateForcePerSecond = 700f;
+    private float accelerateForcePerSecond = 7000f;
     private float deAccelerateForcePerSecond = 300f;
 
     [Header("Car Current Value")]
@@ -62,7 +62,7 @@ public class Car_movement : MonoBehaviour
     {
         foreach (var wheel in wheels)
         {
-            Debug.DrawRay(wheel.position + adjustTrackPosition, -transform.up * 0.5f, Color.yellow, 300f);
+            // Debug.DrawRay(wheel.position + adjustTrackPosition, -transform.up * 0.5f, Color.yellow, 300f);
             if (Physics.Raycast(wheel.position + adjustTrackPosition, -transform.up * 0.5f, out RaycastHit hit, 300f))
             {
                 if (hit.collider != null)
