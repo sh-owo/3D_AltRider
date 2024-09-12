@@ -22,7 +22,7 @@ public class CountdownManager : MonoBehaviour
 
     IEnumerator StartCountdown()
     {
-        int countdown = 12;
+        int countdown = 3;
 
         while (countdown > 0)
         {

@@ -137,7 +137,7 @@ public class AI_Car_Movement : Agent
             if (time > timeLimit)
             {
                 AddReward(timeoutPenalty);
-                EndEpisode();
+                // EndEpisode();
             }
 
             time += Time.deltaTime;
