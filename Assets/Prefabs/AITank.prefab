@@ -209,6 +209,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: T90LP Desert
       objectReference: {fileID: 0}
+    - target: {fileID: 1836033217504908, guid: 7e65c1f943c4ccf40ae1d463bc024c17, type: 3}
+      propertyPath: m_Name
+      value: Track
+      objectReference: {fileID: 0}
     - target: {fileID: 4873584501471496, guid: 7e65c1f943c4ccf40ae1d463bc024c17, type: 3}
       propertyPath: m_LocalScale.y
       value: 2
