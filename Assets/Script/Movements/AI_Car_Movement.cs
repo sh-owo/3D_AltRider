@@ -21,7 +21,7 @@ public class AI_Car_Movement : Agent
     private int currentindex = 0;
 
     private float checkpointReachDistance = 1f;
-    private float timeLimit = 100f;
+    private float timeLimit = 5f;
     private float finishReward = 5f;
     private float checkpointReward = 1f;
     private float wrongDirectionPenalty = -0.1f;
@@ -32,6 +32,7 @@ public class AI_Car_Movement : Agent
     private void Awake()
     {
         InitializeCarMovement();
+        CheckpointList();
     }
 
     private void InitializeCarMovement()
@@ -49,8 +50,8 @@ public class AI_Car_Movement : Agent
 
     public override void Initialize()
     {
-        finishLine = GameObject.Find("FinishLine")?.transform;
-        CheckpointList();
+        finishLine = checkpointTransforms[checkpointTransforms.Count - 1];
+        Debug.Log("Finish line: " + finishLine.name);
         previous_distance = float.MaxValue;
         initialPosition = transform.position;
         currentindex = 0;
@@ -63,70 +64,91 @@ public class AI_Car_Movement : Agent
     }
 
     public override void OnActionReceived(ActionBuffers actionBuffers)
+{
+    if (carMovement != null && carMovement.isAIControlled)
     {
-        if (carMovement != null && carMovement.isAIControlled)
+        float vertical = actionBuffers.ContinuousActions[0] + 0.5f;
+        float horizontal = actionBuffers.ContinuousActions[1];
+
+        // 체크포인트 방향 계산
+        if (currentindex < checkpointTransforms.Count)
         {
-            float vertical = actionBuffers.ContinuousActions[0] * 2f - 1f;  // [-1, 1] 범위로 스케일링
-            float horizontal = actionBuffers.ContinuousActions[1] * 2f - 1f;
+            Vector3 directionToCheckpoint = (checkpointTransforms[currentindex].position - transform.position).normalized;
+            Vector3 carForward = transform.forward;
 
-            carMovement.AiControl(vertical, horizontal);
-        
-            float currentSpeed = carMovement.GetCurrentSpeed;
-            float speedReward = currentSpeed * 0.1f;
-            AddReward(speedReward);
+            // 차량이 체크포인트를 향하도록 회전각도를 조정
+            float angleToCheckpoint = Vector3.SignedAngle(carForward, directionToCheckpoint, Vector3.up);
+            horizontal = Mathf.Clamp(angleToCheckpoint / 45f, -1f, 1f);  // 방향을 서서히 맞추도록 스케일링
 
-            Debug.Log($"Action: V={vertical:F2}, H={horizontal:F2}, Speed={currentSpeed:F2}, Reward={speedReward:F2}");
+            // 차량이 직진하도록 강제
+            // vertical += 0.4f
+        }
+
+        // 차량 제어
+        carMovement.AiControl(vertical, horizontal);
+
+        float currentSpeed = carMovement.GetCurrentSpeed;
+        float speedReward = currentSpeed * 0.03f;
+        AddReward(speedReward);
+
+        Debug.Log($"Action: V={vertical:F2}, H={horizontal:F2}, Speed={currentSpeed:F2}, Distance={previous_distance:F2}");
+    }
+    else
+    {
+        Debug.LogError("carMovement is null or not AI controlled in OnActionReceived!");
+        return;
+    }
+    
+
+    // 체크포인트 처리
+    if (currentindex < checkpointTransforms.Count)
+    {
+        float distanceToCheckpoint = Vector3.Distance(transform.position, checkpointTransforms[currentindex].position);
+
+        if (distanceToCheckpoint < checkpointReachDistance)
+        {
+            float saveTime = timeLimit - time;
+            AddReward(saveTime*0.9f);
+            currentindex++;
+            time = 0f;
+            SetReward(checkpointReward);
+        }
+
+        if (currentindex == checkpointTransforms.Count)
+        {
+            Debug.Log("doing end phaze");
+            float distanceToFinish = Vector3.Distance(transform.position, finishLine.position);
+            
+            if (distanceToFinish < 0.1f)
+            {
+                SetReward(finishReward);
+                Debug.Log("Finished");
+                EndEpisode();
+            }
+        }
+
+        // 이동 방향 보상
+        if (distanceToCheckpoint < previous_distance + 0.3f)
+        {
+            float rewardMultiplier = 1f - (distanceToCheckpoint / previous_distance);
+            AddReward(rewardMultiplier * 0.2f);
         }
         else
         {
-            Debug.LogError("carMovement is null or not AI controlled in OnActionReceived!");
-            return;
+            AddReward(wrongDirectionPenalty * Time.deltaTime);
         }
-        
-        AddReward(carMovement.GetCurrentSpeed*0.5f);
 
-        if (currentindex < checkpointTransforms.Count)
+        if (time > timeLimit)
         {
-            float distanceToCheckpoint = Vector3.Distance(transform.position, checkpointTransforms[currentindex].position);
-
-            if (distanceToCheckpoint < checkpointReachDistance)
-            {
-                currentindex++;
-                time = 0f;
-                SetReward(checkpointReward);
-            }
-
-            if (currentindex == checkpointTransforms.Count)
-            {
-                float distanceToFinish = Vector3.Distance(transform.position, finishLine.position);
-                if (distanceToFinish < 0.1f)
-                {
-                    SetReward(finishReward);
-                    Debug.Log("Finished");
-                    EndEpisode();
-                }
-            }
-            
-            if (distanceToCheckpoint < previous_distance+0.5f)
-            {
-                float rewardMultiplier = 1f - (distanceToCheckpoint / previous_distance);
-                AddReward(rewardMultiplier * 0.1f);
-            }
-            else
-            {
-                AddReward(wrongDirectionPenalty * Time.deltaTime);
-            }
-
-            if (time > timeLimit)
-            {
-                AddReward(timeoutPenalty);
-                EndEpisode();
-            }
-
-            time += Time.deltaTime;
-            previous_distance = distanceToCheckpoint;
+            AddReward(timeoutPenalty);
+            EndEpisode();
         }
+
+        time += Time.deltaTime;
+        previous_distance = distanceToCheckpoint;
     }
+}
+
 
     public override void OnEpisodeBegin()
     {
@@ -140,7 +162,7 @@ public class AI_Car_Movement : Agent
         {
             Debug.LogError("carMovement is null in OnEpisodeBegin!");
         }
-
+        carMovement.ResetCarValues();
         transform.position = initialPosition;
         transform.rotation = Quaternion.Euler(0, 0, 0);
         currentindex = 0;

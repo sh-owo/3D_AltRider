@@ -7,7 +7,7 @@ TagManager:
   - Track
   - Endline
   - Bot
-  - CheckPoint
+  - Checkpoint
   layers:
   - Default
   - TransparentFX

@@ -15,7 +15,7 @@ public class Car_movement : MonoBehaviour
     private float maxSpeed = 50f;
     private float maxAccelerateForce = 1000f;
     private float minAccelerateForce = 800f;
-    private float maxSteerAngle = 30f;
+    // private float maxSteerAngle = 30f;
 
     [Header("Acceleration Value")]
     private float steerRotatePerSecond = 20f;
@@ -143,8 +143,12 @@ public class Car_movement : MonoBehaviour
     public void SetCurrentAccelerateForce(float value) => currentAccelerateForce = value;
     public void SetCurrentSteerAngle(float value) => currentSteerAngle = value;
 
-    // public void ResetCarValues()
-    // {
-    //     // Resetting values for new episode (if AI-controlled).
-    // }
+    public void ResetCarValues()
+    {
+        currentSpeed = 0f;
+        currentSteerAngle = 0f;
+        currentAccelerateForce = 0f;
+        carRigidbody.rotation = Quaternion.Euler(0, 0, 0);
+        carRigidbody.velocity = Vector3.zero;
+    }
 }
