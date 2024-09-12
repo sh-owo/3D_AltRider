@@ -25,8 +25,8 @@ public class Car_movement : MonoBehaviour
     public float currentSteerAngle = 0f;
     public float currentAccelerateForce = 0f;
     public float currentSpeed = 0f;
+    public bool isAIControlled = false;
     private Vector3 adjustTrackPosition = new Vector3(0, 2.75f, -4);
-
     void Awake()
     {
         carRigidbody = GetComponent<Rigidbody>();
@@ -36,15 +36,19 @@ public class Car_movement : MonoBehaviour
 
     void FixedUpdate()
     {
-        float vertical = Input.GetAxis("Vertical");
-        float horizontal = Input.GetAxis("Horizontal");
-        Accelerate(vertical);
-        Steering(horizontal);
-        Flip();
+        if (!isAIControlled)
+        {
+            float vertical = Input.GetAxis("Vertical");
+            float horizontal = Input.GetAxis("Horizontal");
+            Accelerate(vertical);
+            Steering(horizontal);
+            Flip();
+        }
     }
     
     public float GetSpeed() => carRigidbody.velocity.magnitude;
-    
+
+
     private void Flip()
     {
         if (!AreWheelsOnGround() && Input.GetKeyDown(KeyCode.R))
@@ -53,20 +57,7 @@ public class Car_movement : MonoBehaviour
             carTransform.rotation = Quaternion.Euler(carTransform.rotation.x, carTransform.rotation.eulerAngles.y, 0);
         }
     }
-    // private bool AreWheelsOnGround()
-    // {
-    //     foreach (var wheel in wheels)
-    //     {
-    //         if (Physics.Raycast(wheel.position, -transform.up, out RaycastHit hit, 0.5f))
-    //         {
-    //             if (hit.collider != null)
-    //             {
-    //                 return true;
-    //             }
-    //         }
-    //     }
-    //     return false;
-    // }
+
     private bool AreWheelsOnGround()
     {
         foreach (var wheel in wheels)
@@ -88,13 +79,13 @@ public class Car_movement : MonoBehaviour
     public void Accelerate(float vertical)
     {
         if (!AreWheelsOnGround()) return;
-        
+
         currentSpeed = GetSpeed();
         if (vertical > 0.05f)
         {
             if (currentAccelerateForce < 0) { currentAccelerateForce = -0.4f * currentAccelerateForce; }
             currentAccelerateForce += accelerateForcePerSecond * vertical * Time.deltaTime;
-            currentAccelerateForce = Mathf.Clamp(currentAccelerateForce,-minAccelerateForce, maxAccelerateForce);
+            currentAccelerateForce = Mathf.Clamp(currentAccelerateForce, -minAccelerateForce, maxAccelerateForce);
         }
         else if (vertical < -0.05f)
         {
@@ -106,9 +97,10 @@ public class Car_movement : MonoBehaviour
         {
             currentAccelerateForce = Mathf.Lerp(currentAccelerateForce, 0, Time.deltaTime * 5f);
         }
+        
         if (currentSpeed < maxSpeed)
         {
-            this.carRigidbody.AddForce(currentAccelerateForce * transform.forward);
+            carRigidbody.AddForce(currentAccelerateForce * transform.forward);
         }
     }
 
@@ -129,6 +121,7 @@ public class Car_movement : MonoBehaviour
 
         return constant;
     }
+
     public void Steering(float horizontal)
     {
         float currentSpeed = carRigidbody.velocity.magnitude;
@@ -139,21 +132,27 @@ public class Car_movement : MonoBehaviour
         if (Mathf.Abs(horizontal) >= 0.05f) { currentSteerAngle = constant * horizontal * steerRotatePerSecond * 10f; }
         else { currentSteerAngle = Mathf.Lerp(currentSteerAngle, 0, Time.deltaTime * 5f); }
         this.carRigidbody.rotation = Quaternion.Euler(carRigidbody.rotation.eulerAngles + new Vector3(0, currentSteerAngle * Time.deltaTime, 0));
-        
+    }
+    
+    public void AiControl(float vertical, float horizontal)
+    {
+        Accelerate(vertical);
+        Steering(horizontal);
     }
     
     public float GetCurrentSpeed { get { return currentSpeed; } }
 
     public float GetCurrentSteerAngle { get {return currentSteerAngle;} }
-    
-    // public float GetMaxSteerAngle() => maxSteerAngle;
-    // public float GetMaxAccelerateForce() => maxAccelerateForce;
 
     public void SetCurrentAccelerateForce(float value) => currentAccelerateForce = value;
     public void SetCurrentSteerAngle(float value) => currentSteerAngle = value;
 
     public void ResetCarValues()
     {
-
+        currentSpeed = 0f;
+        currentSteerAngle = 0f;
+        currentAccelerateForce = 0f;
+        carRigidbody.rotation = Quaternion.Euler(0, 0, 0);
+        carRigidbody.velocity = Vector3.zero;
     }
 }
