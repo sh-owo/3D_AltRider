@@ -160,13 +160,9 @@ public class AI_Car_Movement : Agent
     public void OnTriggerEnter(Collider other)
     {
         Debug.Log($"collided with {other.gameObject.name}, tag: {other.gameObject.tag}");
-        Debug.Log($"Currnet Checkpoint Index: {currentCheckpointIndex}, Touched Checkpoint: {other.gameObject.name}");
+        // Debug.Log($"Currnet Checkpoint Index: {currentCheckpointIndex}, Touched Checkpoint: {other.gameObject.name}");
         
-        if(other.gameObject.CompareTag("Track"))
-        {
-            AddReward(trackCollisionPenalty);
-            EndEpisode();
-        }
+        // if(other.gameObject.CompareTag("Track")) { AddReward(trackCollisionPenalty); EndEpisode();}
         if (other.gameObject.CompareTag("Player")) { AddReward(playerCollisionPenalty); }
 
         if (other.gameObject.CompareTag("Checkpoint"))
@@ -180,6 +176,7 @@ public class AI_Car_Movement : Agent
                 AddReward(checkpointReward);
                 previous_distance = float.MaxValue;
             }
+            time = 0f;
         }
         
         if(other.gameObject.CompareTag("Endline"))
