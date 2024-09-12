@@ -131,7 +131,7 @@ public class AI_Car_Movement : Agent
         if (distanceToCheckpoint < previous_distance + 0.3f)
         {
             float rewardMultiplier = 1f - (distanceToCheckpoint / previous_distance);
-            AddReward(rewardMultiplier * 0.2f);
+            AddReward(rewardMultiplier * 0.4f);
         }
         else
         {
