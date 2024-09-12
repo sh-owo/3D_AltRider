@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 2823088479010567282}
   - component: {fileID: 5231024481858604958}
   - component: {fileID: 6803347717615298735}
-  - component: {fileID: 8860549309291104730}
+  - component: {fileID: 7216691309604907397}
   m_Layer: 0
   m_Name: WideCurve
   m_TagString: Untagged
@@ -86,8 +86,8 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &8860549309291104730
-BoxCollider:
+--- !u!64 &7216691309604907397
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -104,6 +104,7 @@ BoxCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 0.075, y: 0.018743958, z: 0.0020000006}
-  m_Center: {x: -0.0375, y: 0.009371977, z: -0.0010000003}
+  serializedVersion: 5
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 2503168200576415169, guid: c31ec2e73b0850b48ae0e2f9ca87743c, type: 3}
