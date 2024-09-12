@@ -77,3 +77,5 @@ ProjectSettings/
 ProjectSettings/Packages/com.unity.testtools.codecoverage/Settings.json
 
 /[Aa]ssets/[Tt]extMesh Pro
+
+Packages/packages-lock.json
