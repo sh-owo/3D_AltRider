@@ -15,7 +15,7 @@ public class AI_Car_Movement : Agent
 
     private Car_movement carMovement;
     private float previous_distance;
-    private List<Transform> checkpointTransforms;
+    public List<Transform> checkpointTransforms;
     private Transform finishLine;
 
     private int currentCheckpointIndex = 0;
@@ -103,7 +103,7 @@ public class AI_Car_Movement : Agent
             float horizontal = actionBuffers.ContinuousActions[1];
 
             //TODO 점검기
-            OnDrawGizmos();
+            // OnDrawGizmos();
             // 체크포인트 방향 계산
             if (currentCheckpointIndex < checkpointTransforms.Count)
             {
@@ -122,7 +122,7 @@ public class AI_Car_Movement : Agent
             float speedReward = currentSpeed * 0.03f;
             AddReward(speedReward);
 
-            // Debug.Log($"Action: V={vertical:F2}, H={horizontal:F2}, Speed={currentSpeed:F2}, Distance={previous_distance:F2}");
+            Debug.Log($"Action: V={vertical:F2}, H={horizontal:F2}, Speed={currentSpeed:F2}, Distance={previous_distance:F2}");
         }
         else
         {
@@ -155,8 +155,39 @@ public class AI_Car_Movement : Agent
             previous_distance = distanceToCheckpoint;
         }
     }
-    
-    private void OnTriggerEnter(Collider other)
+
+
+    public void OnTriggerEnter(Collider other)
+    {
+        Debug.Log($"collided with {other.gameObject.name}, tag: {other.gameObject.tag}");
+        Debug.Log($"Currnet Checkpoint Index: {currentCheckpointIndex}, Touched Checkpoint: {other.gameObject.name}");
+        
+        if(other.gameObject.CompareTag("Track"))
+        {
+            AddReward(trackCollisionPenalty);
+            EndEpisode();
+        }
+        if (other.gameObject.CompareTag("Player")) { AddReward(playerCollisionPenalty); }
+
+        if (other.gameObject.CompareTag("Checkpoint"))
+        {
+            int checkpointNumber = int.Parse(other.gameObject.name.Substring(10));
+
+            if (currentCheckpointIndex == checkpointNumber)
+            {   
+                currentCheckpointIndex++;
+                AddReward(checkpointReward);
+                previous_distance = float.MaxValue;
+            }
+        }
+        
+        if(other.gameObject.CompareTag("Endline"))
+        {
+            AddReward(finishReward);
+            EndEpisode();
+        }
+    }
+    /*private void OnTriggerEnter(Collider other)
     {
         Debug.Log($"collided with {other.gameObject.name}, tag: {other.gameObject.tag}");
         // 체크포인트 충돌 처리
@@ -189,7 +220,7 @@ public class AI_Car_Movement : Agent
             AddReward(finishReward);
             EndEpisode();
         }
-    }
+    }*/
 
 
 
@@ -214,8 +245,29 @@ public class AI_Car_Movement : Agent
             checkpointTransforms.Add(checkpoint.transform);
         }
 
-        checkpointTransforms.Sort((a, b) => a.name.CompareTo(b.name));
+        checkpointTransforms.Sort((a, b) => 
+        {
+            int aNumber = ExtractNumber(a.name);
+            int bNumber = ExtractNumber(b.name);
+            return aNumber.CompareTo(bNumber);
+        });
+
         Debug.Log("Loaded " + checkpointTransforms.Count + " checkpoints.");
+        // for(int i = 0; i < checkpointTransforms.Count; i++)
+        // {
+        //     Debug.Log($"Checkpoint {i}: {checkpointTransforms[i].name}");
+        // }
+    }
+
+    private int ExtractNumber(string name)
+    {
+        string numberPart = System.Text.RegularExpressions.Regex.Match(name, @"\d+").Value;
+        int number;
+        if (int.TryParse(numberPart, out number))
+        {
+            return number;
+        }
+        return 0; // 숫자를 추출할 수 없는 경우 0을 반환
     }
     
     public void OnDrawGizmos()
