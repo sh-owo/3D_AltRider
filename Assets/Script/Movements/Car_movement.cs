@@ -25,6 +25,7 @@ public class Car_movement : MonoBehaviour
     public float currentSteerAngle = 0f;
     public float currentAccelerateForce = 0f;
     public float currentSpeed = 0f;
+    private Vector3 adjustTrackPosition = new Vector3(0, 2.75f, -4);
 
     void Awake()
     {
@@ -52,24 +53,41 @@ public class Car_movement : MonoBehaviour
             carTransform.rotation = Quaternion.Euler(carTransform.rotation.x, carTransform.rotation.eulerAngles.y, 0);
         }
     }
+    // private bool AreWheelsOnGround()
+    // {
+    //     foreach (var wheel in wheels)
+    //     {
+    //         if (Physics.Raycast(wheel.position, -transform.up, out RaycastHit hit, 0.5f))
+    //         {
+    //             if (hit.collider != null)
+    //             {
+    //                 return true;
+    //             }
+    //         }
+    //     }
+    //     return false;
+    // }
     private bool AreWheelsOnGround()
     {
         foreach (var wheel in wheels)
         {
-            if (Physics.Raycast(wheel.position, -transform.up, out RaycastHit hit, 0.5f))
+            Debug.DrawRay(wheel.position + adjustTrackPosition, -transform.up * 0.5f, Color.yellow, 300f);
+            if (Physics.Raycast(wheel.position + adjustTrackPosition, -transform.up * 0.5f, out RaycastHit hit, 300f))
             {
                 if (hit.collider != null)
                 {
+                    // Debug.Log("wheels on the ground");
                     return true;
                 }
             }
         }
+        // Debug.Log("No wheels on the ground");
         return false;
     }
 
     public void Accelerate(float vertical)
     {
-        // if (!AreWheelsOnGround()) return;
+        if (!AreWheelsOnGround()) return;
         
         currentSpeed = GetSpeed();
         if (vertical > 0.05f)
