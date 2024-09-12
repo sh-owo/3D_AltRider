@@ -7,6 +7,7 @@ using Unity.MLAgents.Sensors;
 using Unity.MLAgents.Actuators;
 using Unity.VisualScripting;
 using UnityEngine;
+using System.Text.RegularExpressions;
 
 public class AI_Car_Movement : Agent
 {   
@@ -29,7 +30,7 @@ public class AI_Car_Movement : Agent
     private float trackCollisionPenalty = -0.7f;
     private float playerCollisionPenalty = -0.5f;
     private float wrongCheckpointPenalty = -3f;
-    
+
     private void Awake()
     {
         InitializeCarMovement();
@@ -67,20 +68,17 @@ public class AI_Car_Movement : Agent
     {
         if (carMovement != null)
         {
-            carMovement.currentSpeed = 0f;
-            carMovement.currentSteerAngle = 0f;
-            carMovement.currentAccelerateForce = 0f;
+            carMovement.ResetCarValues();
+            transform.position = initialPosition;
+            transform.rotation = Quaternion.Euler(0, 0, 0);
+            currentCheckpointIndex = 0;
+            previous_distance = float.MaxValue;
+            time = 0f;
         }
         else
         {
             Debug.LogError("carMovement is null in OnEpisodeBegin!");
         }
-        carMovement.ResetCarValues();
-        transform.position = initialPosition;
-        transform.rotation = Quaternion.Euler(0, 0, 0);
-        currentCheckpointIndex = 0;
-        previous_distance = float.MaxValue;
-        time = 0f;
     }
     
     public override void CollectObservations(VectorSensor sensor)
@@ -89,6 +87,7 @@ public class AI_Car_Movement : Agent
         sensor.AddObservation(carMovement.transform.position);
         sensor.AddObservation(carMovement.transform.rotation);
         sensor.AddObservation(carMovement.GetCurrentSpeed);
+
         if (currentCheckpointIndex < checkpointTransforms.Count)
         {
             sensor.AddObservation(checkpointTransforms[currentCheckpointIndex].position - transform.position);
@@ -101,8 +100,7 @@ public class AI_Car_Movement : Agent
         {
             float vertical = actionBuffers.ContinuousActions[0] + 0.5f;
             float horizontal = actionBuffers.ContinuousActions[1];
-            
-            // 체크포인트 방향 계산
+
             if (currentCheckpointIndex < checkpointTransforms.Count)
             {
                 Vector3 directionToCheckpoint = (checkpointTransforms[currentCheckpointIndex].position - transform.position).normalized;
@@ -113,30 +111,23 @@ public class AI_Car_Movement : Agent
                 horizontal = Mathf.Clamp(angleToCheckpoint / 45f, -1f, 1f);  // 방향을 서서히 맞추도록 스케일링
             }
 
-            // 차량 제어
             carMovement.AiControl(vertical, horizontal);
 
             float currentSpeed = carMovement.GetCurrentSpeed;
-            float speedReward = currentSpeed * 0.03f;
-            AddReward(speedReward);
-
-            // Debug.Log($"Action: V={vertical:F2}, H={horizontal:F2}, Speed={currentSpeed:F2}, Distance={previous_distance:F2}");
+            AddReward(currentSpeed * 0.03f);
         }
         else
         {
             Debug.LogError("carMovement is null or not AI controlled in OnActionReceived!");
-            return;
         }
 
-        // 체크포인트 처리
         if (currentCheckpointIndex < checkpointTransforms.Count)
         {
             float distanceToCheckpoint = Vector3.Distance(transform.position, checkpointTransforms[currentCheckpointIndex].position);
 
             if (distanceToCheckpoint < previous_distance + 0.5f)
             {
-                float rewardMultiplier = 1f - (distanceToCheckpoint / previous_distance);
-                AddReward(rewardMultiplier * 0.4f);
+                AddReward((1f - (distanceToCheckpoint / previous_distance)) * 0.4f);
             }
             else
             {
@@ -154,15 +145,32 @@ public class AI_Car_Movement : Agent
         }
     }
 
-
     public void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.CompareTag("Player")) { AddReward(playerCollisionPenalty); }
+        if (other.gameObject.CompareTag("Player")) 
+        {
+            AddReward(playerCollisionPenalty);
+        }
 
         if (other.gameObject.CompareTag("Checkpoint"))
         {
             Debug.Log("Current Checkpoint Index: " + currentCheckpointIndex);
-            int checkpointNumber = int.Parse(other.gameObject.name.Substring(10));
+        
+            string checkpointName = other.gameObject.name;
+
+            int checkpointNumber = -1;
+            string pattern = @"Checkpoint \((\d+)\)";
+            Match match = Regex.Match(checkpointName, pattern);
+
+            if (match.Success)
+            {
+                checkpointNumber = int.Parse(match.Groups[1].Value);
+            }
+            else
+            {
+                Debug.LogError("Checkpoint name is not in the correct format: " + checkpointName);
+                return;
+            }
 
             if (currentCheckpointIndex == checkpointNumber)
             {   
@@ -170,21 +178,16 @@ public class AI_Car_Movement : Agent
                 AddReward(checkpointReward);
                 previous_distance = float.MaxValue;
             }
+
             time = 0f;
         }
-        
-        if(other.gameObject.CompareTag("Endline"))
+    
+        if (other.gameObject.CompareTag("Endline"))
         {
             AddReward(finishReward);
             EndEpisode();
         }
     }
-
-    //TODO 플레이어 충돌도 제작해야함
-
-
-
-
 
     public override void Heuristic(in ActionBuffers actionsOut)
     {
@@ -194,7 +197,6 @@ public class AI_Car_Movement : Agent
             continuousActionsOut[0] = Input.GetAxis("Vertical");
             continuousActionsOut[1] = Input.GetAxis("Horizontal");
         }
-
     }
 
     public void CheckpointList()
@@ -215,21 +217,15 @@ public class AI_Car_Movement : Agent
         });
 
         Debug.Log("Loaded " + checkpointTransforms.Count + " checkpoints.");
-        for(int i = 0; i < checkpointTransforms.Count; i++)
-        {
-            Debug.Log($"Checkpoint {i}: {checkpointTransforms[i].name}");
-        }
     }
 
     private int ExtractNumber(string name)
     {
-        string numberPart = System.Text.RegularExpressions.Regex.Match(name, @"\d+").Value;
-        int number;
-        if (int.TryParse(numberPart, out number))
+        string numberPart = Regex.Match(name, @"\d+").Value;
+        if (int.TryParse(numberPart, out int number))
         {
             return number;
         }
-        return 0; // 숫자를 추출할 수 없는 경우 0을 반환
+        return 0; 
     }
-    
 }
