@@ -163,6 +163,7 @@ MonoBehaviour:
   currentSteerAngle: 0
   currentAccelerateForce: 0
   currentSpeed: 0
+  isAIControlled: 0
 --- !u!1001 &57345855335802882
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -248,7 +249,28 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1423850459085314, guid: cb4fd6a623385fb4fb454f9e6c5c6cbd, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4398438431746907822}
+    - targetCorrespondingSourceObject: {fileID: 1466390340008374, guid: cb4fd6a623385fb4fb454f9e6c5c6cbd, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4702033079791543740}
   m_SourcePrefab: {fileID: 100100000, guid: cb4fd6a623385fb4fb454f9e6c5c6cbd, type: 3}
+--- !u!1 &58140443802653108 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1466390340008374, guid: cb4fd6a623385fb4fb454f9e6c5c6cbd, type: 3}
+  m_PrefabInstance: {fileID: 57345855335802882}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &4702033079791543740
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 58140443802653108}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 157bd07dfe7709682ac5da0893f36f2f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tank: {fileID: 8491797956728965058}
 --- !u!1 &58183116324475392 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1423850459085314, guid: cb4fd6a623385fb4fb454f9e6c5c6cbd, type: 3}
