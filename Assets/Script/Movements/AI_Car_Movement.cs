@@ -76,14 +76,16 @@ public class AI_Car_Movement : Agent
     {
         if (carMovement != null && carMovement.isAIControlled)
         {
-            float vertical = actionBuffers.ContinuousActions[0];
-            float horizontal = actionBuffers.ContinuousActions[1];
+            float vertical = actionBuffers.ContinuousActions[0] * 2f - 1f;  // [-1, 1] 범위로 스케일링
+            float horizontal = actionBuffers.ContinuousActions[1] * 2f - 1f;
 
-            carMovement.Accelerate(vertical);
-            carMovement.Steering(horizontal);
+            carMovement.AiControl(vertical, horizontal);
+        
+            float currentSpeed = carMovement.GetCurrentSpeed;
+            float speedReward = currentSpeed * 0.01f;
+            AddReward(speedReward);
 
-            // Debug.Log($"AI Action - Vertical: {vertical}, Horizontal: {horizontal}");
-            // Debug.Log($"Car Position: {transform.position}, Velocity: {carMovement.GetCurrentSpeed}");
+            Debug.Log($"Action: V={vertical:F2}, H={horizontal:F2}, Speed={currentSpeed:F2}, Distance={previous_distance:F2}, Target={checkpointTransforms[currentindex].position}, TargetName={checkpointTransforms[currentindex].name}");
         }
         else
         {
@@ -113,7 +115,7 @@ public class AI_Car_Movement : Agent
                 }
             }
 
-            if (distanceToCheckpoint < previous_distance)
+            if (distanceToCheckpoint < previous_distance + 0.5f)
             {
                 float rewardMultiplier = 1f - (distanceToCheckpoint / previous_distance);
                 AddReward(rewardMultiplier * 0.1f);
@@ -159,6 +161,7 @@ public class AI_Car_Movement : Agent
         sensor.AddObservation(carMovement.GetCurrentSteerAngle);
         sensor.AddObservation(carMovement.transform.position);
         sensor.AddObservation(carMovement.transform.rotation);
+        sensor.AddObservation(carMovement.GetCurrentSpeed);
         if (currentindex < checkpointTransforms.Count)
         {
             sensor.AddObservation(checkpointTransforms[currentindex].position - transform.position);

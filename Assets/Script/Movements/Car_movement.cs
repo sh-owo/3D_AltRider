@@ -46,16 +46,9 @@ public class Car_movement : MonoBehaviour
             Steering(horizontal);
             Flip();
         }
-        
-        // 현재 속도 업데이트
-        currentSpeed = GetSpeed();
-        
-        // 디버그 정보 출력
-        // Debug.Log($"Car Speed: {currentSpeed}, Position: {transform.position}");
     }
-    
-    public float GetSpeed() => carRigidbody.velocity.magnitude;
 
+    public float GetSpeed() => carRigidbody.velocity.magnitude;
 
     private void Flip()
     {
@@ -65,6 +58,7 @@ public class Car_movement : MonoBehaviour
             carTransform.rotation = Quaternion.Euler(carTransform.rotation.x, carTransform.rotation.eulerAngles.y, 0);
         }
     }
+
     private bool AreWheelsOnGround()
     {
         foreach (var wheel in wheels)
@@ -83,39 +77,29 @@ public class Car_movement : MonoBehaviour
     public void Accelerate(float vertical)
     {
         if (!AreWheelsOnGround()) return;
-        
+
+        currentSpeed = GetSpeed();
         if (vertical > 0.05f)
         {
             if (currentAccelerateForce < 0) { currentAccelerateForce = -0.4f * currentAccelerateForce; }
-            currentAccelerateForce += accelerateForcePerSecond * vertical * Time.fixedDeltaTime;
+            currentAccelerateForce += accelerateForcePerSecond * vertical * Time.deltaTime;
             currentAccelerateForce = Mathf.Clamp(currentAccelerateForce, -minAccelerateForce, maxAccelerateForce);
         }
         else if (vertical < -0.05f)
         {
             if (currentAccelerateForce > 0) { currentAccelerateForce = -0.4f * currentAccelerateForce; }
-            currentAccelerateForce += deAccelerateForcePerSecond * vertical * Time.fixedDeltaTime;
+            currentAccelerateForce += deAccelerateForcePerSecond * vertical * Time.deltaTime;
             currentAccelerateForce = Mathf.Clamp(currentAccelerateForce, -minAccelerateForce, maxAccelerateForce);
         }
         else
         {
-            currentAccelerateForce = Mathf.Lerp(currentAccelerateForce, 0, Time.fixedDeltaTime * 5f);
+            currentAccelerateForce = Mathf.Lerp(currentAccelerateForce, 0, Time.deltaTime * 5f);
         }
-
-        // 속도 제한 확인
+        
         if (currentSpeed < maxSpeed)
         {
-            Vector3 forceVector = transform.forward * currentAccelerateForce;
-            carRigidbody.AddForce(forceVector, ForceMode.Force);
-            Debug.Log($"Applied force: {forceVector.magnitude}");
+            carRigidbody.AddForce(currentAccelerateForce * transform.forward);
         }
-        else
-        {
-            // 최대 속도에 도달했을 때 속도를 유지
-            Vector3 clampedVelocity = Vector3.ClampMagnitude(carRigidbody.velocity, maxSpeed);
-            carRigidbody.velocity = clampedVelocity;
-        }
-
-        // Debug.Log($"Accelerate - Vertical: {vertical}, Force: {currentAccelerateForce}");
     }
 
     public float Steeringconstant()
@@ -135,37 +119,32 @@ public class Car_movement : MonoBehaviour
 
         return constant;
     }
+
     public void Steering(float horizontal)
     {
+        float currentSpeed = carRigidbody.velocity.magnitude;
         float constant = Steeringconstant();
 
-        if (Mathf.Abs(horizontal) >= 0.05f)
-        {
-            currentSteerAngle = constant * horizontal * steerRotatePerSecond * 10f;
-        }
-        else
-        {
-            currentSteerAngle = Mathf.Lerp(currentSteerAngle, 0, Time.fixedDeltaTime * 5f);
-        }
-
-        Quaternion steerRotation = Quaternion.Euler(0, currentSteerAngle * Time.fixedDeltaTime, 0);
-        carRigidbody.MoveRotation(carRigidbody.rotation * steerRotation);
-
-        Debug.Log($"Steering - Horizontal: {horizontal}, Angle: {currentSteerAngle}");
+        if (Mathf.Abs(horizontal) >= 0.05f) { currentSteerAngle = constant * horizontal * steerRotatePerSecond * 10f; }
+        else { currentSteerAngle = Mathf.Lerp(currentSteerAngle, 0, Time.deltaTime * 5f); }
+        this.carRigidbody.rotation = Quaternion.Euler(carRigidbody.rotation.eulerAngles + new Vector3(0, currentSteerAngle * Time.deltaTime, 0));
+    }
+    
+    public void AiControl(float vertical, float horizontal)
+    {
+        Accelerate(vertical);
+        Steering(horizontal);
     }
     
     public float GetCurrentSpeed { get { return currentSpeed; } }
 
     public float GetCurrentSteerAngle { get {return currentSteerAngle;} }
-    
-    // public float GetMaxSteerAngle() => maxSteerAngle;
-    // public float GetMaxAccelerateForce() => maxAccelerateForce;
 
     public void SetCurrentAccelerateForce(float value) => currentAccelerateForce = value;
     public void SetCurrentSteerAngle(float value) => currentSteerAngle = value;
 
-    public void ResetCarValues()
-    {
-
-    }
+    // public void ResetCarValues()
+    // {
+    //     // Resetting values for new episode (if AI-controlled).
+    // }
 }

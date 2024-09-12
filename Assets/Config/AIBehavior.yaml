@@ -13,7 +13,7 @@ behaviors:
       normalize: true
       hidden_units: 128
       num_layers: 2
-      vector_observation_size: 11
+      vector_observation_size: 12
     reward_signals:
       extrinsic:
         gamma: 0.99
