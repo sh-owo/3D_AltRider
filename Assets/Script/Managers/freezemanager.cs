@@ -5,7 +5,6 @@ using TMPro;          // TextMeshPro 사용 시 필요
 
 public class CountdownManager : MonoBehaviour
 {
-
     public TextMeshProUGUI countdownText;  // TextMeshPro 사용 시
     public GameObject[] objectsToDeactivate;  // 비활성화할 오브젝트 그룹
 
