@@ -451,7 +451,7 @@ GameObject:
   - component: {fileID: 373964790}
   m_Layer: 0
   m_Name: Checkpoint0
-  m_TagString: CheckPoint
+  m_TagString: Checkpoint
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1262,7 +1262,7 @@ GameObject:
   - component: {fileID: 1368291624}
   m_Layer: 0
   m_Name: Checkpoint2
-  m_TagString: CheckPoint
+  m_TagString: Checkpoint
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1367,7 +1367,7 @@ GameObject:
   - component: {fileID: 1409753744}
   m_Layer: 0
   m_Name: Checkpoint4
-  m_TagString: CheckPoint
+  m_TagString: Checkpoint
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1546,7 +1546,7 @@ GameObject:
   - component: {fileID: 1802839077}
   m_Layer: 0
   m_Name: Checkpoint3
-  m_TagString: CheckPoint
+  m_TagString: Checkpoint
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1773,6 +1773,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5412377855439549074, guid: fa0b39d63dad94a8cbb61ab4d308f8b3, type: 3}
+      propertyPath: m_Model
+      value: 
+      objectReference: {fileID: 5022602860645237092, guid: 20421a796c95847cc95ac4e15001a6cc, type: 3}
+    - target: {fileID: 5412377855439549074, guid: fa0b39d63dad94a8cbb61ab4d308f8b3, type: 3}
       propertyPath: m_BehaviorName
       value: AIBehavior
       objectReference: {fileID: 0}
@@ -1861,7 +1865,7 @@ GameObject:
   - component: {fileID: 2067034448}
   m_Layer: 0
   m_Name: Checkpoint1
-  m_TagString: CheckPoint
+  m_TagString: Checkpoint
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

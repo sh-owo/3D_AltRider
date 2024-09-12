@@ -171,6 +171,7 @@ public class AI_Car_Movement : Agent
 
         if (other.gameObject.CompareTag("Checkpoint"))
         {
+            Debug.Log("Current Checkpoint Index: " + currentCheckpointIndex);
             int checkpointNumber = int.Parse(other.gameObject.name.Substring(10));
 
             if (currentCheckpointIndex == checkpointNumber)
