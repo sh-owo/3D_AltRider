@@ -40,12 +40,12 @@ public class Car_movement : MonoBehaviour
         float horizontal = Input.GetAxis("Horizontal");
         Accelerate(vertical);
         Steering(horizontal);
-        Flip();
+        //Flip();
     }
 
     public float GetSpeed() => carRigidbody.velocity.magnitude;
 
-
+   /*
     private void Flip()
     {
         if (!AreWheelsOnGround() && Input.GetKeyDown(KeyCode.R))
@@ -67,11 +67,11 @@ public class Car_movement : MonoBehaviour
             }
         }
         return false;
-    }
+    }*/
 
     public void Accelerate(float vertical)
     {
-        if (!AreWheelsOnGround()) return;
+        /*if (!AreWheelsOnGround()) return;*/
         
         currentSpeed = GetSpeed();
         if (vertical > 0.05f)
