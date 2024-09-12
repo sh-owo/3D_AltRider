@@ -1,11 +1,11 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 
 public class ChangeSceneButton : MonoBehaviour
 {
-    public void OnButtonClick()
+    // 씬 전환을 위한 메서드
+    public void OnButtonClick(int sceneBuildIndex)
     {
-        SceneManager.LoadScene("Driving_Scene");
+        SceneManager.LoadScene(sceneBuildIndex);
     }
 }
