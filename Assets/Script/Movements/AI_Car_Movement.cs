@@ -122,7 +122,7 @@ public class AI_Car_Movement : Agent
             float speedReward = currentSpeed * 0.03f;
             AddReward(speedReward);
 
-            Debug.Log($"Action: V={vertical:F2}, H={horizontal:F2}, Speed={currentSpeed:F2}, Distance={previous_distance:F2}");
+            // Debug.Log($"Action: V={vertical:F2}, H={horizontal:F2}, Speed={currentSpeed:F2}, Distance={previous_distance:F2}");
         }
         else
         {
@@ -253,10 +253,10 @@ public class AI_Car_Movement : Agent
         });
 
         Debug.Log("Loaded " + checkpointTransforms.Count + " checkpoints.");
-        // for(int i = 0; i < checkpointTransforms.Count; i++)
-        // {
-        //     Debug.Log($"Checkpoint {i}: {checkpointTransforms[i].name}");
-        // }
+        for(int i = 0; i < checkpointTransforms.Count; i++)
+        {
+            Debug.Log($"Checkpoint {i}: {checkpointTransforms[i].name}");
+        }
     }
 
     private int ExtractNumber(string name)
