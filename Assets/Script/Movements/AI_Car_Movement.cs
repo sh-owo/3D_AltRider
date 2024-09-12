@@ -102,6 +102,8 @@ public class AI_Car_Movement : Agent
             float vertical = actionBuffers.ContinuousActions[0] + 0.5f;
             float horizontal = actionBuffers.ContinuousActions[1];
 
+            //TODO 점검기
+            OnDrawGizmos();
             // 체크포인트 방향 계산
             if (currentCheckpointIndex < checkpointTransforms.Count)
             {
@@ -120,7 +122,7 @@ public class AI_Car_Movement : Agent
             float speedReward = currentSpeed * 0.03f;
             AddReward(speedReward);
 
-            Debug.Log($"Action: V={vertical:F2}, H={horizontal:F2}, Speed={currentSpeed:F2}, Distance={previous_distance:F2}");
+            // Debug.Log($"Action: V={vertical:F2}, H={horizontal:F2}, Speed={currentSpeed:F2}, Distance={previous_distance:F2}");
         }
         else
         {
@@ -154,43 +156,22 @@ public class AI_Car_Movement : Agent
         }
     }
     
-    public void OnTriggerEnter(Collider other)
+    private void OnTriggerEnter(Collider other)
     {
-        // 트리거된 오브젝트 로그 출력
-        // Debug.Log("Trigger Detected with: " + other.gameObject.name);
-
-        // 트랙 충돌 처리
-        if (other.gameObject.CompareTag("Track"))
-        {
-            AddReward(trackCollisionPenalty);
-            EndEpisode();
-        }
-
-        // 플레이어 충돌 처리
-        if (other.gameObject.CompareTag("Player"))
-        {
-            AddReward(playerCollisionPenalty);
-        }
-
+        Debug.Log($"collided with {other.gameObject.name}, tag: {other.gameObject.tag}");
         // 체크포인트 충돌 처리
-        if (other.gameObject.CompareTag("Checkpoint"))
+        if (other.gameObject.name == $"Checkpoint{currentCheckpointIndex}")
         {
-            string checkpointName = other.gameObject.name;
-            int checkpointNumber = int.Parse(checkpointName.Substring("Checkpoint".Length));
-            Debug.Log($"Current checkpoint: {checkpointNumber}, Expected: {currentCheckpointIndex}");
-
-            // 현재 체크포인트와 비교하여 올바른 순서인지 확인
+            int checkpointNumber = checkpointTransforms.IndexOf(other.transform);  // 충돌한 체크포인트 인덱스
+            Debug.Log($"Reached Checkpoint {checkpointNumber}, Next Checkpoint: {currentCheckpointIndex}");
+            // 올바른 체크포인트에 도달했는지 확인
             if (checkpointNumber == currentCheckpointIndex)
             {
-                currentCheckpointIndex++;
-                AddReward(checkpointReward);  // 올바른 체크포인트 도착 시 보상
-                time = 0f;                    // 시간 초기화
-                previous_distance = float.MaxValue;  // 이전 거리 초기화
-
-                // 다음 체크포인트로 업데이트
-                // currentCheckpointIndex = (currentCheckpointIndex + 1) % checkpointTransforms.Count;
-
-                // Debug.Log($"Reached Checkpoint {checkpointNumber}, Next: {currentCheckpointIndex}");
+                // 올바른 체크포인트 도착 시 보상
+                AddReward(checkpointReward);
+                currentCheckpointIndex = (currentCheckpointIndex + 1) % checkpointTransforms.Count;  // 다음 체크포인트로 이동
+                previous_distance = float.MaxValue;  // 거리 초기화
+                Debug.Log($"Reached Checkpoint {checkpointNumber}, Next Checkpoint: {currentCheckpointIndex}");
             }
             else
             {
@@ -199,14 +180,17 @@ public class AI_Car_Movement : Agent
                 Debug.Log($"Wrong Checkpoint! Expected: {currentCheckpointIndex}, Got: {checkpointNumber}");
             }
         }
+        //TODO 플레이어 충돌도 제작해야함
 
-        // 종착선 도착 처리
+        // 종료선 도착 처리
         if (other.gameObject.CompareTag("Endline"))
         {
+            // 종료선 도착 시 보상
             AddReward(finishReward);
             EndEpisode();
         }
     }
+
 
 
     public override void Heuristic(in ActionBuffers actionsOut)
@@ -232,5 +216,24 @@ public class AI_Car_Movement : Agent
 
         checkpointTransforms.Sort((a, b) => a.name.CompareTo(b.name));
         Debug.Log("Loaded " + checkpointTransforms.Count + " checkpoints.");
+    }
+    
+    public void OnDrawGizmos()
+    {
+        // 체크포인트가 설정되어 있는 경우에만 시각화
+        if (checkpointTransforms != null && checkpointTransforms.Count > 0)
+        {
+            // 현재 체크포인트 인덱스가 유효한지 확인
+            if (currentCheckpointIndex >= 0 && currentCheckpointIndex < checkpointTransforms.Count)
+            {
+                // 현재 위치와 목표 체크포인트 위치를 가져옴
+                Vector3 currentPosition = transform.position;
+                Vector3 checkpointPosition = checkpointTransforms[currentCheckpointIndex].position;
+
+                // Gizmos를 사용하여 직선을 그려 현재 위치와 체크포인트를 연결함
+                Gizmos.color = Color.red;  // 선 색상 설정
+                Gizmos.DrawLine(currentPosition, checkpointPosition);
+            }
+        }
     }
 }
