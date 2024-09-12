@@ -21,7 +21,7 @@ public class AI_Car_Movement : Agent
     private int currentindex = 0;
 
     private float checkpointReachDistance = 1f;
-    private float timeLimit = 10f;
+    private float timeLimit = 100f;
     private float finishReward = 5f;
     private float checkpointReward = 1f;
     private float wrongDirectionPenalty = -0.1f;
@@ -32,15 +32,6 @@ public class AI_Car_Movement : Agent
     private void Awake()
     {
         InitializeCarMovement();
-    }
-    
-    private void FixedUpdate()
-    {
-        if (carMovement != null && carMovement.isAIControlled)
-        {
-            // ML-Agents의 결정을 요청
-            RequestDecision();
-        }
     }
 
     private void InitializeCarMovement()
@@ -55,7 +46,6 @@ public class AI_Car_Movement : Agent
             carMovement.isAIControlled = true;
         }
     }
-    
 
     public override void Initialize()
     {
@@ -82,16 +72,18 @@ public class AI_Car_Movement : Agent
             carMovement.AiControl(vertical, horizontal);
         
             float currentSpeed = carMovement.GetCurrentSpeed;
-            float speedReward = currentSpeed * 0.01f;
+            float speedReward = currentSpeed * 0.1f;
             AddReward(speedReward);
 
-            Debug.Log($"Action: V={vertical:F2}, H={horizontal:F2}, Speed={currentSpeed:F2}, Distance={previous_distance:F2}, Target={checkpointTransforms[currentindex].position}, TargetName={checkpointTransforms[currentindex].name}");
+            Debug.Log($"Action: V={vertical:F2}, H={horizontal:F2}, Speed={currentSpeed:F2}, Reward={speedReward:F2}");
         }
         else
         {
             Debug.LogError("carMovement is null or not AI controlled in OnActionReceived!");
             return;
         }
+        
+        AddReward(carMovement.GetCurrentSpeed*0.5f);
 
         if (currentindex < checkpointTransforms.Count)
         {
@@ -114,8 +106,8 @@ public class AI_Car_Movement : Agent
                     EndEpisode();
                 }
             }
-
-            if (distanceToCheckpoint < previous_distance + 0.5f)
+            
+            if (distanceToCheckpoint < previous_distance+0.5f)
             {
                 float rewardMultiplier = 1f - (distanceToCheckpoint / previous_distance);
                 AddReward(rewardMultiplier * 0.1f);
