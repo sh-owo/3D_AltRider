@@ -11,8 +11,7 @@ GameObject:
   - component: {fileID: 4819644563292044596}
   - component: {fileID: 7482486131232770294}
   - component: {fileID: 4960073440873508528}
-  - component: {fileID: 6010244730632678213}
-  - component: {fileID: 2940968444090539344}
+  - component: {fileID: 3071809219095532820}
   m_Layer: 0
   m_Name: BridgeRoad
   m_TagString: Untagged
@@ -89,8 +88,8 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &6010244730632678213
-BoxCollider:
+--- !u!64 &3071809219095532820
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -107,27 +106,7 @@ BoxCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 152.41473, y: 30.480017, z: 2.6122983}
-  m_Center: {x: -0.0073051453, y: 0.0000038146973, z: -4.826198}
---- !u!65 &2940968444090539344
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7600536134903535373}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 150.06387, y: 30.480017, z: 3.004719}
-  m_Center: {x: -0.8878784, y: 0.0000038146973, z: -4.6299806}
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -3025179133607064014, guid: efd775cce4ee0044e892f23e0b8b6e1a, type: 3}
