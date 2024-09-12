@@ -11,8 +11,8 @@ GameObject:
   - component: {fileID: 4819644563292044596}
   - component: {fileID: 7482486131232770294}
   - component: {fileID: 4960073440873508528}
-  - component: {fileID: -6168528015282459085}
-  - component: {fileID: 3944254093441451751}
+  - component: {fileID: 6010244730632678213}
+  - component: {fileID: 2940968444090539344}
   m_Layer: 0
   m_Name: BridgeRoad
   m_TagString: Untagged
@@ -89,7 +89,7 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &-6168528015282459085
+--- !u!65 &6010244730632678213
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -108,9 +108,9 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 152.40013, y: 30.480017, z: 19.525827}
-  m_Center: {x: -0.0000076293945, y: 0.0000038146968, z: 3.6305754}
---- !u!65 &3944254093441451751
+  m_Size: {x: 152.41473, y: 30.480017, z: 2.6122983}
+  m_Center: {x: -0.0073051453, y: 0.0000038146973, z: -4.826198}
+--- !u!65 &2940968444090539344
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -129,5 +129,5 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 152.40013, y: 30.480017, z: 19.525827}
-  m_Center: {x: -0.0000076293945, y: 0.0000038146968, z: 3.6305754}
+  m_Size: {x: 150.06387, y: 30.480017, z: 3.004719}
+  m_Center: {x: -0.8878784, y: 0.0000038146973, z: -4.6299806}
